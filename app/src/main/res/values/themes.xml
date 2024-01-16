@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.ATINsNLC" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.start.screen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@anim/logo_animation</item>
+        <item name="postSplashScreenTheme">@style/Theme.ATINsNLC</item>
+    </style>
+</resources>
