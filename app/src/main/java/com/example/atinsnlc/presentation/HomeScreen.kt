@@ -1,6 +1,7 @@
 package com.example.atinsnlc.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,9 +36,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+
 
 @Composable
-fun Sections() {
+fun HomeScreen(navController: NavController) {
+    NavigationDrawer(navController)
+}
+
+
+@Composable
+fun Sections(navController: NavController) {
     val gridState = rememberLazyStaggeredGridState()
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -53,7 +62,12 @@ fun Sections() {
                     .fillMaxSize()
                     .padding(5.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color.LightGray),
+                    .background(Color.LightGray)
+                    .clickable {
+                               if (item.title == "News & Events") {
+                                   navController.navigate("news&events")
+                               }
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -94,7 +108,7 @@ private val items = mutableListOf(
 
     Item(
         icon = Icons.Filled.Money,
-        title = "Fees"
+        title = "Fee Structure"
     ),
 
     Item(

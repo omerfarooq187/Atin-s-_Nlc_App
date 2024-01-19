@@ -56,17 +56,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import androidx.navigation.NavController
 import com.example.atinsnlc.R
 import kotlinx.coroutines.launch
 
-@Preview(showBackground = true)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationDrawer() {
+fun NavigationDrawer(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val coroutineScope = rememberCoroutineScope()
@@ -80,10 +80,12 @@ fun NavigationDrawer() {
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
             ) {
-                
-                Box(contentAlignment = Alignment.Center,
-                    modifier = Modifier.wrapContentSize())
-                 {
+
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.wrapContentSize()
+                )
+                {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -102,7 +104,7 @@ fun NavigationDrawer() {
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
-                            )
+                        )
 
                         Spacer(modifier = Modifier.padding(8.dp))
                         Divider()
@@ -113,7 +115,7 @@ fun NavigationDrawer() {
                 navigationItems.forEach { item ->
                     NavigationDrawerItem(
                         label = {
-                                Text(text = item.title)
+                            Text(text = item.title)
                         },
                         selected = item == selectedItem,
                         onClick = {
@@ -124,8 +126,11 @@ fun NavigationDrawer() {
                         },
                         icon = {
                             Icon(
-                                imageVector = if (item == selectedItem) {item.selectedIcon}
-                                else {item.unSelectedIcon},
+                                imageVector = if (item == selectedItem) {
+                                    item.selectedIcon
+                                } else {
+                                    item.unSelectedIcon
+                                },
                                 contentDescription = item.title
                             )
                         },
@@ -133,15 +138,13 @@ fun NavigationDrawer() {
                         badge = {
                             if (item.badgeCounts != null && item.badgeCounts != 0) {
                                 Text(text = item.badgeCounts.toString())
-                            }
-                            else {
+                            } else {
                                 Text(text = "")
                             }
                         },
-
-                    )
+                        )
                 }
-        }
+            }
         }
     ) {
         Scaffold(
@@ -159,12 +162,16 @@ fun NavigationDrawer() {
                             Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
                         }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color("#33691E".toColorInt()), navigationIconContentColor = Color.White, titleContentColor = Color.White)
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color("#33691E".toColorInt()),
+                        navigationIconContentColor = Color.White,
+                        titleContentColor = Color.White
+                    )
                 )
             },
         ) {
-            Box (modifier = Modifier.padding(it)){
-                Sections()
+            Box(modifier = Modifier.padding(it)) {
+                Sections(navController)
             }
         }
     }
@@ -188,7 +195,7 @@ val navigationItems = listOf(
     NavigationItem(
         selectedIcon = Icons.Filled.Money,
         unSelectedIcon = Icons.Outlined.Money,
-        title = "Fees"
+        title = "Fee Structure"
     ),
 
     NavigationItem(
