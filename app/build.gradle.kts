@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -47,6 +49,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -70,4 +73,22 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.6")
+
+    //retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //viewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    //room_database
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+
+    //live_data
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+
+    //dagger-hilt
+    implementation("com.google.dagger:hilt-android:2.50")
+    ksp("com.google.dagger:hilt-android-compiler:2.50")
 }

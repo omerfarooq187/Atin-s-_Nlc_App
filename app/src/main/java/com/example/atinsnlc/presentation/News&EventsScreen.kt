@@ -21,6 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -32,10 +39,17 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import com.example.atinsnlc.R
+import com.example.atinsnlc.data.news_events.room.NewsEntity
+import com.example.atinsnlc.viewModel.MainViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun NewsEventsScreen(navController: NavController) {
-    ScreenContent(navController)
+fun NewsEventsScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel
+) {
+    ScreenContent(navController, mainViewModel)
     BackHandler {
         navController.popBackStack()
     }
@@ -43,7 +57,22 @@ fun NewsEventsScreen(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-private fun ScreenContent(navController: NavController) {
+private fun ScreenContent(
+    navController: NavController,
+    mainViewModel: MainViewModel
+) {
+    var newsString by remember { mutableStateOf("") }
+    val news = mainViewModel.news.collectAsState(initial = emptyList())
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(key1 = true) {
+        delay(3000)
+    scope.launch {
+        val data = mainViewModel.extractData(news)
+        newsString = data
+    }
+
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -68,7 +97,8 @@ private fun ScreenContent(navController: NavController) {
                     .fillMaxSize()
             ) {
                 Text(
-                    text = "Welcome to the Applied Technologies Institute Mandra",
+                    if (newsString=="") {"Welcome To Applied Technologies Institute Mandra"}
+                    else {newsString},
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier
                         .background(Color.Green)

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.AppRegistration
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Money
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.outlined.AppRegistration
 import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Money
 import androidx.compose.material.icons.outlined.Newspaper
@@ -120,6 +122,9 @@ fun NavigationDrawer(navController: NavController) {
                         selected = item == selectedItem,
                         onClick = {
                             selectedItem = item
+                            if (item.title == "News & Events") {
+                                navController.navigate("news&events")
+                            }
                             coroutineScope.launch {
                                 drawerState.close()
                             }
@@ -186,6 +191,12 @@ data class NavigationItem(
 )
 
 val navigationItems = listOf(
+    NavigationItem(
+        selectedIcon = Icons.Filled.Home,
+        unSelectedIcon = Icons.Outlined.Home,
+        title = "Home"
+    ),
+
     NavigationItem(
         selectedIcon = Icons.Filled.Newspaper,
         unSelectedIcon = Icons.Outlined.Newspaper,
