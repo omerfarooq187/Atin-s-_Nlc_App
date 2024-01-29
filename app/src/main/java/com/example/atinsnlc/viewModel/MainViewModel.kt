@@ -20,7 +20,7 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
         }
     }
 
-    suspend fun extractData(data: State<List<NewsEntity>>): String {
+    fun extractData(data: State<List<NewsEntity>>): String {
         val resultBuilder = StringBuilder()
 
         data.value.forEach {

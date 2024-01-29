@@ -6,7 +6,6 @@ import com.example.atinsnlc.data.news_events.NewsItem
 import com.example.atinsnlc.data.news_events.room.NewsDatabase
 import com.example.atinsnlc.data.news_events.room.NewsEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 class NewsRepository @Inject constructor(private val newsApi: NewsApi, private val newsDatabase: NewsDatabase) {
