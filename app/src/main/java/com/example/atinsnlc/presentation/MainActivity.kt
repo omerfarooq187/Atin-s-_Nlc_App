@@ -1,6 +1,5 @@
 package com.example.atinsnlc.presentation
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    App(this, mainViewModel)
+                    App(mainViewModel)
                 }
             }
         }
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun App(context: Context, mainViewModel: MainViewModel) {
+fun App(mainViewModel: MainViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable(route = "home") {

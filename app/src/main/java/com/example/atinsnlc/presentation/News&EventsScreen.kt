@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import com.example.atinsnlc.R
-import com.example.atinsnlc.data.news_events.room.NewsEntity
 import com.example.atinsnlc.viewModel.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
