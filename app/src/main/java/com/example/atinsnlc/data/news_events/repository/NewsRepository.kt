@@ -11,10 +11,6 @@ import javax.inject.Inject
 
 class NewsRepository @Inject constructor(private val newsApi: NewsApi, private val newsDatabase: NewsDatabase) {
 
-    private val news = MutableStateFlow<List<NewsEntity>>(emptyList())
-    val newsData: Flow<List<NewsEntity>>
-        get() = news
-
     suspend fun getNews() {
         Log.d("Repo","get news working...")
         val result = newsApi.getNews()
