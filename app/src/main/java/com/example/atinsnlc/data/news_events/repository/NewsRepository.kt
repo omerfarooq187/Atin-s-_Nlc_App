@@ -12,11 +12,15 @@ class NewsRepository @Inject constructor(private val newsApi: NewsApi, private v
 
     suspend fun getNews() {
         Log.d("Repo","get news working...")
-        val result = newsApi.getNews()
-        if (result.isSuccessful) {
-            result.body()?.forEach {
-                saveData(it)
+        try {
+            val result = newsApi.getNews()
+            if (result.isSuccessful) {
+                result.body()?.forEach {
+                    saveData(it)
+                }
             }
+        } catch (e:Exception) {
+            e.printStackTrace()
         }
     }
 

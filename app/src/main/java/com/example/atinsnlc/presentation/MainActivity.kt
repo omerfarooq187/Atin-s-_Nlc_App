@@ -48,7 +48,9 @@ fun App(mainViewModel: MainViewModel) {
         }
         composable(route = "news&events") {
             NewsEventsScreen(navController, mainViewModel)
-
+        }
+        composable(route = "registration") {
+            RegistrationScreen(navController)
         }
     }
 }

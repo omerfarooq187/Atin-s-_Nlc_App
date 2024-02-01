@@ -64,9 +64,12 @@ fun Sections(navController: NavController) {
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color.LightGray)
                     .clickable {
-                               if (item.title == "News & Events") {
+                        if (item.title == "News & Events") {
                                    navController.navigate("news&events")
-                               }
+                        }
+                        else if (item.title == "Registration") {
+                            navController.navigate("registration")
+                        }
                     },
                 contentAlignment = Alignment.Center
             ) {

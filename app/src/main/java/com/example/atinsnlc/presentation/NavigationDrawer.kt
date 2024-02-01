@@ -65,7 +65,6 @@ import androidx.navigation.NavController
 import com.example.atinsnlc.R
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationDrawer(navController: NavController) {
@@ -124,6 +123,9 @@ fun NavigationDrawer(navController: NavController) {
                             selectedItem = item
                             if (item.title == "News & Events") {
                                 navController.navigate("news&events")
+                            }
+                            else if (item.title == "Registration") {
+                                navController.navigate("registration")
                             }
                             coroutineScope.launch {
                                 drawerState.close()
