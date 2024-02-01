@@ -15,8 +15,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.AppRegistration
-import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
@@ -135,7 +135,7 @@ private val items = mutableListOf(
     ),
 
     Item(
-        icon = Icons.Filled.Assignment,
+        icon = Icons.AutoMirrored.Filled.Assignment,
         title = "Results"
     ),
 

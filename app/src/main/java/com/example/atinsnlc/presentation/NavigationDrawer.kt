@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
+import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.AppRegistration
-import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Home
@@ -23,7 +24,6 @@ import androidx.compose.material.icons.filled.PersonSearch
 import androidx.compose.material.icons.filled.Recommend
 import androidx.compose.material.icons.filled.Workspaces
 import androidx.compose.material.icons.outlined.AppRegistration
-import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Home
@@ -236,8 +236,8 @@ val navigationItems = listOf(
     ),
 
     NavigationItem(
-        selectedIcon = Icons.Filled.Assignment,
-        unSelectedIcon = Icons.Outlined.Assignment,
+        selectedIcon = Icons.AutoMirrored.Filled.Assignment,
+        unSelectedIcon = Icons.AutoMirrored.Outlined.Assignment,
         title = "Results"
     ),
 
