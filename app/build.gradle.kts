@@ -91,4 +91,7 @@ dependencies {
     //dagger-hilt
     implementation("com.google.dagger:hilt-android:2.50")
     ksp("com.google.dagger:hilt-android-compiler:2.50")
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }

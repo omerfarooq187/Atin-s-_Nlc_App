@@ -1,16 +1,35 @@
 package com.example.atinsnlc.presentation
 
+import android.content.ContentResolver
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
@@ -24,6 +43,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -35,7 +55,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -45,6 +73,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import kotlinx.coroutines.delay
+
 
 @Composable
 fun RegistrationScreen(navController: NavHostController) {
@@ -83,6 +115,27 @@ fun RegistrationContent(navController: NavHostController) {
         mutableStateOf("Select your desired course")
     }
 
+    //Image picker logic
+    var selectedImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    var imageVisibilty by remember {
+        mutableStateOf(true)
+    }
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val contentResolver: ContentResolver = context.contentResolver
+    var selectedImageBitmap by remember {
+        mutableStateOf<ImageBitmap?>(null)
+    }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {uri ->
+        uri?.let {
+            selectedImageUri = it
+        }
+    }
+
+    val scrollableState = rememberScrollState()
+
         Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -101,7 +154,11 @@ fun RegistrationContent(navController: NavHostController) {
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
+        Box(modifier = Modifier
+            .padding(padding)
+            .verticalScroll(scrollableState)
+        )
+        {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -130,6 +187,7 @@ fun RegistrationContent(navController: NavHostController) {
                 OutlinedTextField(
                     value = name,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                    singleLine = true,
                     onValueChange = {
                         name = it
                     },
@@ -254,6 +312,46 @@ fun RegistrationContent(navController: NavHostController) {
                     }
                 }
 
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 22.dp, vertical = 16.dp)
+                        .border(
+                            border = BorderStroke(1.dp, Color.Black),
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .height(120.dp)
+                        .clickable {
+                            launcher.launch("image/*")
+                            imageVisibilty = false
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (imageVisibilty) {
+                        Text(
+                            text = "Upload Your passport size picture with blue background",
+                        )
+                        Text(text = "Image should be 20 to 30 KB")
+                    }
+                    selectedImageUri?.let {uri ->
+                       val painter = rememberAsyncImagePainter(
+                            ImageRequest.Builder(context)
+                                .data(uri)
+                                .allowHardware(false)
+                                .build()
+                        )
+
+                        Image(
+                            painter = painter,
+                            contentDescription = "image",
+                            modifier = Modifier
+                                .size(100.dp)
+                        )
+                    }
+                }
+
                 Button(
                     modifier = Modifier
                         .padding(16.dp)
@@ -270,3 +368,4 @@ fun RegistrationContent(navController: NavHostController) {
         }
     }
 }
+
