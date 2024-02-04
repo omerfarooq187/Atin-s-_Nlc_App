@@ -62,6 +62,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics:1.6.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
     implementation("androidx.compose.material3:material3:1.1.2")
+//    implementation("androidx.compose.material3:material3-android:1.2.0-rc01")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -77,6 +78,8 @@ dependencies {
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    //okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     //viewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")

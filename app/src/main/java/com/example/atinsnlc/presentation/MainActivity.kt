@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     App(mainViewModel)
                 }
             }
@@ -50,7 +49,7 @@ fun App(mainViewModel: MainViewModel) {
             NewsEventsScreen(navController, mainViewModel)
         }
         composable(route = "registration") {
-            RegistrationScreen(navController)
+            RegistrationScreen(navController, mainViewModel)
         }
     }
 }

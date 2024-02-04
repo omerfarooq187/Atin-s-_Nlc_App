@@ -1,21 +1,20 @@
 package com.example.atinsnlc.presentation
 
-import android.content.ContentResolver
+import android.app.DatePickerDialog
 import android.content.Context
 import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,8 +27,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
@@ -43,7 +43,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -55,15 +54,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -75,17 +67,22 @@ import androidx.core.graphics.toColorInt
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import kotlinx.coroutines.delay
-
+import com.example.atinsnlc.data.registration.StudentDataItem
+import com.example.atinsnlc.viewModel.MainViewModel
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.util.Calendar
 
 @Composable
-fun RegistrationScreen(navController: NavHostController) {
-    RegistrationContent(navController)
+fun RegistrationScreen(navController: NavHostController, mainViewModel: MainViewModel) {
+    RegistrationContent(navController, mainViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationContent(navController: NavHostController) {
+fun RegistrationContent(navController: NavHostController, mainViewModel: MainViewModel) {
     val menuItems = listOf(
         "Computer Information Technology",
         "Mechanical Technology",
@@ -97,6 +94,9 @@ fun RegistrationContent(navController: NavHostController) {
         mutableStateOf("")
     }
     var fatherName by remember {
+        mutableStateOf("")
+    }
+    val dob by remember {
         mutableStateOf("")
     }
     var cnic by remember {
@@ -123,11 +123,7 @@ fun RegistrationContent(navController: NavHostController) {
         mutableStateOf(true)
     }
     val context = LocalContext.current
-    val uriHandler = LocalUriHandler.current
-    val contentResolver: ContentResolver = context.contentResolver
-    var selectedImageBitmap by remember {
-        mutableStateOf<ImageBitmap?>(null)
-    }
+    val contentResolver = context.contentResolver
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {uri ->
         uri?.let {
             selectedImageUri = it
@@ -240,6 +236,9 @@ fun RegistrationContent(navController: NavHostController) {
                     modifier = Modifier
                         .padding(5.dp)
                 )
+                //Date field
+                DatePicker(context = context)
+                
                 OutlinedTextField(
                     value = contact,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
@@ -356,7 +355,20 @@ fun RegistrationContent(navController: NavHostController) {
                     modifier = Modifier
                         .padding(16.dp)
                         .size(height = 50.dp, width = 140.dp),
-                    onClick = {},
+                    onClick = {
+                        val studentDataItem = StudentDataItem(
+                            name = name,
+                            father_name = fatherName,
+                            dob = dob,
+                            cnic = cnic.toLong(),
+                            contact_no = contact.toLong(),
+                            gmail = gmail,
+                            course = selectedCourse,
+                            image = uploadImage(selectedImageUri)
+                        )
+                        mainViewModel.postStudentData(studentDataItem)
+                        Log.d("Register","Button Clicked....")
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color("#33691E".toColorInt()), contentColor = Color.White)
                     ) {
                     Text(
@@ -369,3 +381,59 @@ fun RegistrationContent(navController: NavHostController) {
     }
 }
 
+@Composable
+fun DatePicker(context: Context) {
+    val day: Int
+    val month: Int
+    val year: Int
+
+    val calendar = Calendar.getInstance()
+    day = calendar.get(Calendar.DAY_OF_MONTH)
+    month = calendar.get(Calendar.MONTH)
+    year = calendar.get(Calendar.YEAR)
+
+    var date by remember {
+        mutableStateOf("yyyy-MM-dd")
+    }
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, pickedYear, pickedMonth, pickedDay ->
+            val formattedMonth = String.format("%02d", pickedMonth + 1) // Add leading zero
+            val formattedDay = String.format("%02d", pickedDay) // Add leading zero
+            date = "$pickedYear-$formattedMonth-$formattedDay"
+        },
+        year,
+        month,
+        day
+    )
+
+    OutlinedTextField(
+        value = date,
+        onValueChange = { date = it },
+        readOnly = true,
+        label = {
+            Text(text = "Date of birth")
+        },
+        leadingIcon = {
+            Icon(imageVector = Icons.Filled.DateRange, contentDescription = "dob")
+        },
+        trailingIcon = {
+            IconButton(onClick = { datePickerDialog.show() }) {
+                Icon(imageVector = Icons.Filled.Edit, contentDescription = "date")
+            }
+        },
+        modifier = Modifier
+            .padding(5.dp)
+    )
+}
+
+fun uploadImage(uri: Uri?): MultipartBody.Part {
+    uri?.let {
+        val file = File(uri.path) // Use a function to get the real path from the content URI
+        val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("image", file.name, requestFile)
+    }
+    // Handle the case where uri is null (optional)
+    throw IllegalArgumentException("Uri is null")
+}
