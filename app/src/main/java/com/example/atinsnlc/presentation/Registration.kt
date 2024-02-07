@@ -3,7 +3,6 @@ package com.example.atinsnlc.presentation
 import android.app.DatePickerDialog
 import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,11 +69,14 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.atinsnlc.data.registration.StudentDataItem
 import com.example.atinsnlc.viewModel.MainViewModel
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.io.FileOutputStream
 import java.util.Calendar
+
 
 @Composable
 fun RegistrationScreen(navController: NavHostController, mainViewModel: MainViewModel) {
@@ -124,22 +127,28 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
     }
     val context = LocalContext.current
     val contentResolver = context.contentResolver
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {uri ->
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             selectedImageUri = it
         }
     }
+    val scope = rememberCoroutineScope()
 
     val scrollableState = rememberScrollState()
 
-        Scaffold(
+    Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Text(text = "Registration")
-            },
+            TopAppBar(
+                title = {
+                    Text(text = "Registration")
+                },
                 navigationIcon = {
-                    IconButton(onClick = {navController.popBackStack()}) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "back", modifier = Modifier.padding(5.dp))
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "back",
+                            modifier = Modifier.padding(5.dp)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -150,9 +159,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
             )
         }
     ) { padding ->
-        Box(modifier = Modifier
-            .padding(padding)
-            .verticalScroll(scrollableState)
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .verticalScroll(scrollableState)
         )
         {
             Column(
@@ -170,7 +180,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Serif,
 
-                )
+                    )
                 Text(
                     text = "Applied Technologies Institute",
                     textAlign = TextAlign.Center,
@@ -182,7 +192,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
 
                 OutlinedTextField(
                     value = name,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
                     singleLine = true,
                     onValueChange = {
                         name = it
@@ -201,7 +214,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                 )
                 OutlinedTextField(
                     value = fatherName,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
                     onValueChange = {
                         fatherName = it
                     },
@@ -220,7 +236,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
 
                 OutlinedTextField(
                     value = cnic,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    ),
                     onValueChange = {
                         cnic = it
                     },
@@ -238,10 +257,13 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                 )
                 //Date field
                 DatePicker(context = context)
-                
+
                 OutlinedTextField(
                     value = contact,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    ),
                     onValueChange = {
                         contact = it
                     },
@@ -259,7 +281,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                 )
                 OutlinedTextField(
                     value = gmail,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
                     onValueChange = {
                         gmail = it
                     },
@@ -295,12 +320,12 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     )
                     ExposedDropdownMenu(
                         expanded = isExpanded,
-                        onDismissRequest = {isExpanded = false}
+                        onDismissRequest = { isExpanded = false }
                     ) {
                         menuItems.forEach {
                             DropdownMenuItem(
                                 text = {
-                                       Text(text = it)
+                                    Text(text = it)
                                 },
                                 onClick = {
                                     isExpanded = false
@@ -334,8 +359,8 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         )
                         Text(text = "Image should be 20 to 30 KB")
                     }
-                    selectedImageUri?.let {uri ->
-                       val painter = rememberAsyncImagePainter(
+                    selectedImageUri?.let { uri ->
+                        val painter = rememberAsyncImagePainter(
                             ImageRequest.Builder(context)
                                 .data(uri)
                                 .allowHardware(false)
@@ -364,13 +389,19 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                             contact_no = contact.toLong(),
                             gmail = gmail,
                             course = selectedCourse,
-                            image = uploadImage(selectedImageUri)
                         )
-                        mainViewModel.postStudentData(studentDataItem)
-                        Log.d("Register","Button Clicked....")
+
+                        val image = uploadImage(context, selectedImageUri)
+                        scope.launch {
+                            mainViewModel.postStudentData(studentDataItem, image)
+                        }
+                        Log.d("Register", "Button Clicked....")
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color("#33691E".toColorInt()), contentColor = Color.White)
-                    ) {
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color("#33691E".toColorInt()),
+                        contentColor = Color.White
+                    )
+                ) {
                     Text(
                         text = "Register",
                         fontSize = 16.sp
@@ -428,12 +459,14 @@ fun DatePicker(context: Context) {
     )
 }
 
-fun uploadImage(uri: Uri?): MultipartBody.Part {
-    uri?.let {
-        val file = File(uri.path) // Use a function to get the real path from the content URI
-        val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-        return MultipartBody.Part.createFormData("image", file.name, requestFile)
-    }
-    // Handle the case where uri is null (optional)
-    throw IllegalArgumentException("Uri is null")
+fun uploadImage(context: Context, uri: Uri?): MultipartBody.Part {
+    val filesDir = context.applicationContext.filesDir
+    val file = File(filesDir, "image.png")
+
+    val inputStream = context.contentResolver.openInputStream(uri!!)
+    val outputStream = FileOutputStream(file)
+    inputStream?.copyTo(outputStream)
+
+    val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+    return MultipartBody.Part.createFormData("image", file.name, requestBody)
 }

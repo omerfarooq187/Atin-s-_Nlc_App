@@ -10,11 +10,16 @@ import com.example.atinsnlc.data.registration.repository.DataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val newsRepository: NewsRepository, private val dataRepository: DataRepository): ViewModel() {
-    lateinit var news:Flow<List<NewsEntity>>
+class MainViewModel @Inject constructor(
+    private val newsRepository: NewsRepository,
+    private val dataRepository: DataRepository
+) : ViewModel() {
+    lateinit var news: Flow<List<NewsEntity>>
+
     init {
         viewModelScope.launch {
             newsRepository.getNews()
@@ -33,7 +38,7 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
         return resultBuilder.toString().trim()
     }
 
-    fun postStudentData(studentDataItem: StudentDataItem) {
-        dataRepository.postData(studentDataItem)
+    suspend fun postStudentData(studentDataItem: StudentDataItem, image: MultipartBody.Part) {
+        dataRepository.postData(studentDataItem, image)
     }
 }

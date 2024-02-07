@@ -1,4 +1,4 @@
-package com.example.atinsnlc.data.news_events.di
+package com.example.atinsnlc.data.di
 
 import com.example.atinsnlc.data.news_events.NewsApi
 import com.example.atinsnlc.data.registration.RegistrationApi
@@ -20,7 +20,7 @@ class NetworkModule {
     fun provideRetrofit(): Retrofit {
         return Retrofit
             .Builder()
-            .baseUrl("http://192.168.108.62:8080/")
+            .baseUrl("http://192.168.111.62:8080/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(
                 OkHttpClient().newBuilder()

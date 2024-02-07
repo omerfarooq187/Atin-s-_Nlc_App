@@ -1,4 +1,4 @@
-package com.example.atinsnlc.data.news_events.di
+package com.example.atinsnlc.data.di
 
 import android.content.Context
 import androidx.room.Room
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 class RoomDataModule {
     @Singleton
     @Provides
-    fun provideNewsData(@ApplicationContext context: Context) : NewsDatabase{
+    fun provideNewsData(@ApplicationContext context: Context): NewsDatabase {
         return Room.databaseBuilder(
             context,
             NewsDatabase::class.java,
