@@ -1,9 +1,12 @@
 package com.example.atinsnlc.presentation
 
 import android.app.DatePickerDialog
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -63,6 +66,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
@@ -86,6 +90,7 @@ fun RegistrationScreen(navController: NavHostController, mainViewModel: MainView
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationContent(navController: NavHostController, mainViewModel: MainViewModel) {
+
     val menuItems = listOf(
         "Computer Information Technology",
         "Mechanical Technology",
@@ -126,7 +131,6 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
         mutableStateOf(true)
     }
     val context = LocalContext.current
-    val contentResolver = context.contentResolver
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             selectedImageUri = it
@@ -381,21 +385,38 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         .padding(16.dp)
                         .size(height = 50.dp, width = 140.dp),
                     onClick = {
-                        val studentDataItem = StudentDataItem(
+                        val validate = validateFields(
                             name = name,
-                            father_name = fatherName,
-                            dob = dob,
-                            cnic = cnic.toLong(),
-                            contact_no = contact.toLong(),
+                            fatherName = fatherName,
+                            cnic = cnic,
+                            contact = contact,
                             gmail = gmail,
                             course = selectedCourse,
+                            imageUri = selectedImageUri!!,
+                            context = context
                         )
+                        if (validate) {
+                            val studentDataItem = StudentDataItem(
+                                name = name,
+                                father_name = fatherName,
+                                dob = dob,
+                                cnic = cnic.toLong(),
+                                contact_no = contact.toLong(),
+                                gmail = gmail,
+                                course = selectedCourse,
+                            )
 
-                        val image = uploadImage(context, selectedImageUri)
-                        scope.launch {
-                            mainViewModel.postStudentData(studentDataItem, image)
+                            val image = uploadImage(context, selectedImageUri)
+
+                            scope.launch {
+                                val studentId = mainViewModel.postStudentData(studentDataItem, image)
+                                if (studentId != -1) {
+                                    val response = mainViewModel.downloadForm(studentId)
+                                    val file = mainViewModel.savePdf(response,"form.pdf",context)
+                                    downloadPdf(context,file!!)
+                                }
+                            }
                         }
-                        Log.d("Register", "Button Clicked....")
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color("#33691E".toColorInt()),
@@ -414,34 +435,36 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
 
 @Composable
 fun DatePicker(context: Context) {
-    val day: Int
-    val month: Int
-    val year: Int
-
-    val calendar = Calendar.getInstance()
-    day = calendar.get(Calendar.DAY_OF_MONTH)
-    month = calendar.get(Calendar.MONTH)
-    year = calendar.get(Calendar.YEAR)
-
-    var date by remember {
-        mutableStateOf("yyyy-MM-dd")
-    }
+    val currentCalendar = Calendar.getInstance()
+    val selectedDate = remember { mutableStateOf(currentCalendar) }
+    val dateText = remember { mutableStateOf("yyyy-MM-dd") }
 
     val datePickerDialog = DatePickerDialog(
         context,
-        { _, pickedYear, pickedMonth, pickedDay ->
-            val formattedMonth = String.format("%02d", pickedMonth + 1) // Add leading zero
-            val formattedDay = String.format("%02d", pickedDay) // Add leading zero
-            date = "$pickedYear-$formattedMonth-$formattedDay"
+        { _, year, month, day ->
+            val selectedCalendar = Calendar.getInstance().apply {
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, day)
+            }
+            if (isDateValid(selectedCalendar)) {
+                selectedDate.value = selectedCalendar
+                val formattedMonth = String.format("%02d", month + 1)
+                val formattedDay = String.format("%02d", day)
+                dateText.value = "$year-$formattedMonth-$formattedDay"
+            } else {
+                // Show an error or inform the user that the selected date is not valid
+                // You can customize this part based on your UI/UX requirements
+            }
         },
-        year,
-        month,
-        day
+        currentCalendar.get(Calendar.YEAR),
+        currentCalendar.get(Calendar.MONTH),
+        currentCalendar.get(Calendar.DAY_OF_MONTH)
     )
 
     OutlinedTextField(
-        value = date,
-        onValueChange = { date = it },
+        value = dateText.value,
+        onValueChange = {},
         readOnly = true,
         label = {
             Text(text = "Date of birth")
@@ -459,6 +482,12 @@ fun DatePicker(context: Context) {
     )
 }
 
+private fun isDateValid(selectedDate: Calendar): Boolean {
+    val currentDate = Calendar.getInstance()
+    currentDate.add(Calendar.YEAR, -16) // Subtract 16 years from the current date
+    return selectedDate <= currentDate
+}
+
 fun uploadImage(context: Context, uri: Uri?): MultipartBody.Part {
     val filesDir = context.applicationContext.filesDir
     val file = File(filesDir, "image.png")
@@ -466,7 +495,75 @@ fun uploadImage(context: Context, uri: Uri?): MultipartBody.Part {
     val inputStream = context.contentResolver.openInputStream(uri!!)
     val outputStream = FileOutputStream(file)
     inputStream?.copyTo(outputStream)
-
+    inputStream?.close()
     val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-    return MultipartBody.Part.createFormData("image", file.name, requestBody)
+    val imageBody = MultipartBody.Part.createFormData("image", file.name, requestBody)
+    Log.d("Image Body", "uploadImage: $imageBody")
+    return imageBody
+}
+
+fun validateFields(
+    name: String,
+    fatherName: String,
+    cnic: String,
+    contact: String,
+    gmail: String,
+    course: String,
+    imageUri: Uri,
+    context: Context
+): Boolean {
+    var validation = true
+
+    if (name.isEmpty() || Regex("[!@#\$%^&)*(~?><}{|/=-_]").matches(name)) {
+        Toast.makeText(context, "Enter valid name", Toast.LENGTH_SHORT).show()
+        validation = false
+    } else if (fatherName.isEmpty() || Regex("[!@#\$%^&)*(~?><}{|/=-_]").matches(fatherName)) {
+        Toast.makeText(context, "Enter valid Father's name", Toast.LENGTH_SHORT).show()
+        validation = false
+    } else if (cnic.length > 13 || cnic.length < 13) {
+        Toast.makeText(context, "Enter valid CNIC or B-form", Toast.LENGTH_SHORT).show()
+        validation = false
+    } else if (contact.length > 11 || contact.length < 11) {
+        Toast.makeText(context, "Enter Valid Contact No", Toast.LENGTH_SHORT).show()
+        validation = false
+    } else if (course == "Select your desired course") {
+        Toast.makeText(context, "Select course", Toast.LENGTH_SHORT).show()
+        validation = false
+    } else if (gmail.isNotEmpty() &&!gmail.contains("@")) {
+        Toast.makeText(
+            context,
+            "Enter valid email otherwise don't enter email",
+            Toast.LENGTH_SHORT
+        ).show()
+        validation = false
+    } else if (imageUri == null) {
+        Toast.makeText(context,
+            "Select a photo",
+            Toast.LENGTH_SHORT
+            ).show()
+    }
+    return validation
+}
+
+fun downloadPdf(context: Context, pdfFile: File) {
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.setDataAndType(
+        FileProvider.getUriForFile(
+            context,
+            "com.example.atinsnlc.provider",
+            pdfFile
+        ),
+        "application/pdf"
+    )
+    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+       // Create a chooser to allow the user to pick an app for viewing the PDF
+    val chooserIntent = Intent.createChooser(intent, "Open PDF with")
+
+    try {
+        context.startActivity(chooserIntent)
+    } catch (e: ActivityNotFoundException) {
+        // Handle the case where no app is available to open the PDF
+        Toast.makeText(context, "No PDF viewer found", Toast.LENGTH_SHORT).show()
+    }
 }
