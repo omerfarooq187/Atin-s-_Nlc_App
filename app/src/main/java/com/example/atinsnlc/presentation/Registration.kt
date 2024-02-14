@@ -4,6 +4,8 @@ import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -36,6 +38,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -57,7 +60,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -73,6 +78,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.atinsnlc.data.registration.StudentDataItem
 import com.example.atinsnlc.viewModel.MainViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -127,7 +133,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
-    var imageVisibilty by remember {
+    var imageVisibility by remember {
         mutableStateOf(true)
     }
     val context = LocalContext.current
@@ -139,6 +145,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
     val scope = rememberCoroutineScope()
 
     val scrollableState = rememberScrollState()
+
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         topBar = {
@@ -165,10 +175,20 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
     ) { padding ->
         Box(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(scrollableState)
+                .verticalScroll(scrollableState),
+            contentAlignment = Alignment.Center
         )
         {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(16.dp)
+
+                )
+                BlurEffect(1f,1f, TileMode.Clamp)
+            }
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -352,12 +372,12 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         .height(120.dp)
                         .clickable {
                             launcher.launch("image/*")
-                            imageVisibilty = false
+                            imageVisibility = false
                         },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (imageVisibilty) {
+                    if (imageVisibility) {
                         Text(
                             text = "Upload Your passport size picture with blue background",
                         )
@@ -405,15 +425,34 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                                 gmail = gmail,
                                 course = selectedCourse,
                             )
+                            isLoading = true
 
                             val image = uploadImage(context, selectedImageUri)
 
                             scope.launch {
-                                val studentId = mainViewModel.postStudentData(studentDataItem, image)
-                                if (studentId != -1) {
-                                    val response = mainViewModel.downloadForm(studentId)
-                                    val file = mainViewModel.savePdf(response,"form.pdf",context)
-                                    downloadPdf(context,file!!)
+                                if (isInternetAvailable(context)) {
+                                    val studentId =
+                                        mainViewModel.postStudentData(studentDataItem, image)
+                                    if (studentId != -1) {
+                                        val response = mainViewModel.downloadForm(studentId)
+                                        val file =
+                                            mainViewModel.savePdf(response, "form.pdf", context)
+                                        isLoading = false
+                                        navController.popBackStack()
+                                        downloadPdf(context, file!!)
+                                        delay(1500)
+                                        mainViewModel.throwRegistrationNotification(
+                                            context,
+                                            "Applied Technologies Institute",
+                                            "You have been successfully registered"
+                                        )
+                                    }
+                                    else {
+                                        Toast.makeText(context,"Something wrong, Try again",Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                else {
+                                    Toast.makeText(context,"No Internet connection, Try again", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -566,4 +605,19 @@ fun downloadPdf(context: Context, pdfFile: File) {
         // Handle the case where no app is available to open the PDF
         Toast.makeText(context, "No PDF viewer found", Toast.LENGTH_SHORT).show()
     }
+}
+
+//Internet connection check method
+private fun isInternetAvailable(context: Context) :Boolean{
+    var result: Boolean
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networkCapabilities = connectivityManager.activeNetwork?: return false
+    val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
+    result = when {
+        actNw?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true -> true
+        actNw?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true -> true
+        actNw?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true -> true
+        else -> false
+    }
+    return result
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.atinsnlc.data.news_events.repository.NewsRepository
 import com.example.atinsnlc.data.news_events.room.NewsEntity
+import com.example.atinsnlc.data.registration.NotificationUtils
 import com.example.atinsnlc.data.registration.StudentDataItem
 import com.example.atinsnlc.data.registration.repository.DataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
-    private val dataRepository: DataRepository
+    private val dataRepository: DataRepository,
+    private val notificationUtils: NotificationUtils
 ) : ViewModel() {
     lateinit var news: Flow<List<NewsEntity>>
 
@@ -68,7 +70,9 @@ class MainViewModel @Inject constructor(
             e.printStackTrace()
             null
         }
+    }
 
-
+    fun throwRegistrationNotification(context: Context, title:String, content:String) {
+        notificationUtils.createNotification(context,title,content)
     }
 }

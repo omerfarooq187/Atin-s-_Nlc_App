@@ -70,6 +70,9 @@ fun Sections(navController: NavController) {
                         else if (item.title == "Registration") {
                             navController.navigate("registration")
                         }
+                        else if (item.title == "Fee Structure") {
+                            navController.navigate("fee_structure")
+                        }
                     },
                 contentAlignment = Alignment.Center
             ) {

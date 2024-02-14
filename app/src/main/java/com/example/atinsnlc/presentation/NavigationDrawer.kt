@@ -35,6 +35,7 @@ import androidx.compose.material.icons.outlined.Workspaces
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
@@ -108,7 +109,7 @@ fun NavigationDrawer(navController: NavController) {
                         )
 
                         Spacer(modifier = Modifier.padding(8.dp))
-                        Divider()
+                        HorizontalDivider()
                         Spacer(modifier = Modifier.padding(8.dp))
                     }
 

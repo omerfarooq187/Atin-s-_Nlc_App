@@ -1,5 +1,9 @@
 package com.example.atinsnlc.presentation
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    requestAppPermissions(this)
                     App(mainViewModel)
                 }
             }
@@ -51,6 +57,22 @@ fun App(mainViewModel: MainViewModel) {
         composable(route = "registration") {
             RegistrationScreen(navController, mainViewModel)
         }
+        composable(route = "fee_structure") {
+            FeeStructureScreen(navController)
+        }
+        composable(route = "recommendations") {
+            RecommendationsScreen(navController)
+        }
+    }
+}
+
+fun requestAppPermissions(context: Context) {
+    if (ActivityCompat.checkSelfPermission(context,Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            255
+        )
     }
 }
 
