@@ -122,11 +122,25 @@ fun NavigationDrawer(navController: NavController) {
                         selected = item == selectedItem,
                         onClick = {
                             selectedItem = item
-                            if (item.title == "News & Events") {
-                                navController.navigate("news&events")
-                            }
-                            else if (item.title == "Registration") {
-                                navController.navigate("registration")
+                            when (item.title) {
+                                "News & Events" -> {
+                                    navController.navigate("news&events")
+                                }
+                                "Registration" -> {
+                                    navController.navigate("registration")
+                                }
+                                "Fee Structure" -> {
+                                    navController.navigate("fee_structure")
+                                }
+                                "Courses Catalog" -> {
+                                    navController.navigate("courses")
+                                }
+                                "About Us" -> {
+                                    navController.navigate("about_us")
+                                }
+                                "Contact Us" -> {
+                                    navController.navigate("contact_us")
+                                }
                             }
                             coroutineScope.launch {
                                 drawerState.close()
@@ -171,9 +185,9 @@ fun NavigationDrawer(navController: NavController) {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color("#33691E".toColorInt()),
-                        navigationIconContentColor = Color.White,
-                        titleContentColor = Color.White
+                        containerColor = Color("#9E9E9E".toColorInt()),
+                        navigationIconContentColor = Color.Black,
+                        titleContentColor = Color.Black
                     )
                 )
             },

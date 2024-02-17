@@ -21,7 +21,7 @@ class NetworkModule {
     fun provideRetrofit(): Retrofit {
         return Retrofit
             .Builder()
-            .baseUrl("http://192.168.108.62:8080/")
+            .baseUrl("https://umarfarooq90.pythonanywhere.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(
                 OkHttpClient().newBuilder()

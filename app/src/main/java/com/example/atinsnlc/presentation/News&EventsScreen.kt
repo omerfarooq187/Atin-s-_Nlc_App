@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,9 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
@@ -79,13 +83,13 @@ private fun ScreenContent(
             },
                 navigationIcon = {
                     IconButton(onClick = {navController.popBackStack()}) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "back", modifier = Modifier.padding(5.dp))
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "back", modifier = Modifier.padding(5.dp))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#33691E".toColorInt()),
-                    navigationIconContentColor = Color.White,
-                    titleContentColor = Color.White
+                    containerColor = Color("#9E9E9E".toColorInt()),
+                    navigationIconContentColor = Color.Black,
+                    titleContentColor = Color.Black
                 )
             )
         }
@@ -99,8 +103,9 @@ private fun ScreenContent(
                     if (newsString=="") {"Welcome To Applied Technologies Institute Mandra"}
                     else {newsString},
                     style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White,
                     modifier = Modifier
-                        .background(Color.Green)
+                        .background(Color("#E65100".toColorInt()))
                         .padding(10.dp)
                         .fillMaxWidth()
                         .basicMarquee(
@@ -118,16 +123,35 @@ private fun ScreenContent(
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color("#33691E".toColorInt()))
+                        .background(Color("#E65100".toColorInt()))
                         .padding(10.dp)
                 )
+                val bullet = "\u2022"
+                val paragraphStyle = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))
+                
                 Text(
-                    text = stringResource(id = R.string.news_description),
-                    textAlign = TextAlign.Justify,
+                    buildAnnotatedString {
+                        newsItem.forEach {
+                            withStyle(style = paragraphStyle) {
+                                withStyle(style = SpanStyle(fontSize = 24.sp)) {
+                                    append(bullet)
+                                }
+                                append("\t\t")
+                                append(it)
+                            }
+                        }
+                    },
                     modifier = Modifier
-                        .padding(4.dp)
+                        .padding(6.dp),
+                    fontSize = 18.sp,
                 )
             }
         }
     }
 }
+
+private val newsItem = listOf(
+    "First String",
+    "Second String",
+    "Third String"
+)

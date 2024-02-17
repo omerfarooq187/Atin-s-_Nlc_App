@@ -166,9 +166,9 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#33691E".toColorInt()),
-                    navigationIconContentColor = Color.White,
-                    titleContentColor = Color.White
+                    containerColor = Color("#9E9E9E".toColorInt()),
+                    navigationIconContentColor = Color.Black,
+                    titleContentColor = Color.Black
                 )
             )
         }
@@ -185,9 +185,8 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                 CircularProgressIndicator(
                     modifier = Modifier
                         .padding(16.dp)
-
+                        .align(Alignment.Center)
                 )
-                BlurEffect(1f,1f, TileMode.Clamp)
             }
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -449,6 +448,11 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                                     }
                                     else {
                                         Toast.makeText(context,"Something wrong, Try again",Toast.LENGTH_SHORT).show()
+                                        mainViewModel.throwRegistrationNotification(
+                                            context,
+                                            "Applied Technologies Institute",
+                                            "You have not been registered, Please try again."
+                                        )
                                     }
                                 }
                                 else {
@@ -537,7 +541,6 @@ fun uploadImage(context: Context, uri: Uri?): MultipartBody.Part {
     inputStream?.close()
     val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
     val imageBody = MultipartBody.Part.createFormData("image", file.name, requestBody)
-    Log.d("Image Body", "uploadImage: $imageBody")
     return imageBody
 }
 

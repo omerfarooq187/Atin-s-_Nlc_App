@@ -63,6 +63,15 @@ fun App(mainViewModel: MainViewModel) {
         composable(route = "recommendations") {
             RecommendationsScreen(navController)
         }
+        composable(route = "courses") {
+            CoursesCatalogScreen(navController)
+        }
+        composable(route = "about_us") {
+            AboutUsScreen(navController)
+        }
+        composable(route = "contact_us") {
+            ContactUsScreen(navController)
+        }
     }
 }
 

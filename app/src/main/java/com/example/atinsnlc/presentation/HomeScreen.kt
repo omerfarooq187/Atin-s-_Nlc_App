@@ -64,14 +64,25 @@ fun Sections(navController: NavController) {
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color.LightGray)
                     .clickable {
-                        if (item.title == "News & Events") {
-                                   navController.navigate("news&events")
-                        }
-                        else if (item.title == "Registration") {
-                            navController.navigate("registration")
-                        }
-                        else if (item.title == "Fee Structure") {
-                            navController.navigate("fee_structure")
+                        when (item.title) {
+                            "News & Events" -> {
+                                navController.navigate("news&events")
+                            }
+                            "Registration" -> {
+                                navController.navigate("registration")
+                            }
+                            "Fee Structure" -> {
+                                navController.navigate("fee_structure")
+                            }
+                            "Courses Catalog" -> {
+                                navController.navigate("courses")
+                            }
+                            "About Us" -> {
+                                navController.navigate("about_us")
+                            }
+                            "Contact Us" -> {
+                                navController.navigate("contact_us")
+                            }
                         }
                     },
                 contentAlignment = Alignment.Center
