@@ -4,17 +4,13 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -38,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
@@ -90,7 +85,7 @@ fun FeeScreenContent(navController: NavController) {
                 fontSize = 16.sp,
                 textAlign = TextAlign.Justify
             )
-            Spacer(modifier = Modifier.height(200.dp))
+            Spacer(modifier = Modifier.height(170.dp))
             Button(
                 onClick = {
                     openPdfFile(context)

@@ -11,6 +11,7 @@ import com.example.atinsnlc.data.registration.StudentDataItem
 import com.example.atinsnlc.data.registration.repository.DataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -25,7 +26,7 @@ class MainViewModel @Inject constructor(
     private val dataRepository: DataRepository,
     private val notificationUtils: NotificationUtils
 ) : ViewModel() {
-    lateinit var news: Flow<List<NewsEntity>>
+    var news: Flow<List<NewsEntity>> = emptyFlow()
 
     init {
         viewModelScope.launch {

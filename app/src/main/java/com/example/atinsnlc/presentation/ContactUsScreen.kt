@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 
@@ -59,7 +58,7 @@ fun ContactScreenContent(navController: NavController) {
                     buildAnnotatedString {
                         append("Have questions, concerns, or just want to reach out? We're here to help! Feel free to connect with us using the following contact information:")
                         append("\n\n")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)) {
                             append("College Address")
                         }
                         append("\n")
@@ -68,8 +67,30 @@ fun ContactScreenContent(navController: NavController) {
                         append("Grand Trunk Road Mandra, Rawalpindi")
                         append("\n")
                         append("Punjab, Pakistan")
+                        append("\n\n")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)) {
+                            append("Contact Details")
+                        }
+                        append("\n")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Kamran Abbas (Program Coordinator):")
+                        }
+                        append("\n")
+                        append("0311-6084839")
+                        append("\n")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Nadeem Tariq (HOD Computer Information Technology):")
+                        }
+                        append("\n")
+                        append("0321-5614203")
+                        append("\n")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Reception:")
+                        }
+                        append("\n")
+                        append("0331-5576966")
                     },
-                    textAlign = TextAlign.Justify
+                    textAlign = TextAlign.Start
                 )
             }
         }

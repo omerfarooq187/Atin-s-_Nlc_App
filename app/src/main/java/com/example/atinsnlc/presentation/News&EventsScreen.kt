@@ -10,9 +10,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,6 +68,7 @@ private fun ScreenContent(
     var newsString by remember { mutableStateOf("") }
     val news = mainViewModel.news.collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
     LaunchedEffect(key1 = true) {
         delay(3000)
     scope.launch {
@@ -94,7 +96,11 @@ private fun ScreenContent(
             )
         }
     ) {
-        Box(modifier = Modifier.padding(it)) {
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .verticalScroll(scrollState)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -108,8 +114,7 @@ private fun ScreenContent(
                         .background(Color("#E65100".toColorInt()))
                         .padding(10.dp)
                         .fillMaxWidth()
-                        .basicMarquee(
-                        )
+                        .basicMarquee()
                 )
 
                 Image(
@@ -151,7 +156,6 @@ private fun ScreenContent(
 }
 
 private val newsItem = listOf(
-    "First String",
-    "Second String",
-    "Third String"
+    "We are thrilled to share the exciting news of the recent visit by the esteemed organization, Humanitarian Development and Research Foundation (HDRF), to ATIN Nlc. The event was marked by a significant interaction between HDRF representatives and our talented students.",
+    "As part of their visit, HDRF organized a prize distribution ceremony, recognizing and appreciating the exemplary efforts and achievements of our students. The event showcased the dedication and hard work of our student community in various fields.",
 )
