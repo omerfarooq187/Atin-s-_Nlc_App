@@ -250,6 +250,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     leadingIcon = {
                         Icon(imageVector = Icons.Filled.Person, contentDescription = "name")
                     },
+                    singleLine = true,
                     modifier = Modifier
                         .padding(5.dp)
                 )
@@ -269,6 +270,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     placeholder = {
                         Text(text = "Enter CNIC Number")
                     },
+                    singleLine = true,
                     leadingIcon = {
                         Icon(imageVector = Icons.Filled.CreditCard, contentDescription = "name")
                     },
@@ -290,6 +292,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     label = {
                         Text(text = "Contact Number")
                     },
+                    singleLine = true,
                     placeholder = {
                         Text(text = "Enter Contact Number")
                     },
@@ -314,6 +317,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     placeholder = {
                         Text(text = "Enter Gmail")
                     },
+                    singleLine = true,
                     leadingIcon = {
                         Icon(imageVector = Icons.Filled.Email, contentDescription = "name")
                     },
@@ -401,65 +405,77 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         .padding(16.dp)
                         .size(height = 50.dp, width = 140.dp),
                     onClick = {
-                        val validate = validateFields(
-                            name = name,
-                            fatherName = fatherName,
-                            cnic = cnic,
-                            contact = contact,
-                            gmail = gmail,
-                            course = selectedCourse,
-                            imageUri = selectedImageUri!!,
-                            context = context
-                        )
-                        if (validate) {
-                            val studentDataItem = StudentDataItem(
+                        try {
+                            val validate = validateFields(
                                 name = name,
-                                father_name = fatherName,
-                                dob = dob,
-                                cnic = cnic.toLong(),
-                                contact_no = contact.toLong(),
+                                fatherName = fatherName,
+                                cnic = cnic,
+                                contact = contact,
                                 gmail = gmail,
                                 course = selectedCourse,
+                                imageUri = selectedImageUri!!,
+                                context = context
                             )
-                            isLoading = true
+                            if (validate) {
+                                val studentDataItem = StudentDataItem(
+                                    name = name,
+                                    father_name = fatherName,
+                                    dob = dob,
+                                    cnic = cnic.toLong(),
+                                    contact_no = contact.toLong(),
+                                    gmail = gmail,
+                                    course = selectedCourse,
+                                )
+                                isLoading = true
 
-                            val image = uploadImage(context, selectedImageUri)
+                                val image = uploadImage(context, selectedImageUri)
 
-                            scope.launch {
-                                if (isInternetAvailable(context)) {
-                                    val studentId =
-                                        mainViewModel.postStudentData(studentDataItem, image)
-                                    if (studentId != -1) {
-                                        val response = mainViewModel.downloadForm(studentId)
-                                        val file =
-                                            mainViewModel.savePdf(response, "form.pdf", context)
-                                        isLoading = false
-                                        navController.popBackStack()
-                                        downloadPdf(context, file!!)
-                                        delay(1500)
-                                        mainViewModel.throwRegistrationNotification(
-                                            context,
-                                            "Applied Technologies Institute",
-                                            "You have been successfully registered"
-                                        )
+                                scope.launch {
+                                    try {
+                                        if (isInternetAvailable(context)) {
+                                            val studentId =
+                                                mainViewModel.postStudentData(studentDataItem, image)
+                                            if (studentId != -1) {
+                                                val response = mainViewModel.downloadForm(studentId)
+                                                val file =
+                                                    mainViewModel.savePdf(response, "form.pdf", context)
+                                                isLoading = false
+                                                navController.popBackStack()
+                                                downloadPdf(context, file!!)
+                                                delay(1500)
+                                                mainViewModel.throwRegistrationNotification(
+                                                    context,
+                                                    "Applied Technologies Institute",
+                                                    "You have been successfully registered"
+                                                )
+                                            }
+                                            else {
+                                                Toast.makeText(context,"Something wrong, Try again",Toast.LENGTH_SHORT).show()
+                                                isLoading = false
+                                                mainViewModel.throwRegistrationNotification(
+                                                    context,
+                                                    "Applied Technologies Institute",
+                                                    "You have not been registered, Please try again."
+                                                )
+                                            }
+                                        }
+                                        else {
+                                            Toast.makeText(context,"No Internet connection, Try again", Toast.LENGTH_SHORT).show()
+                                            isLoading = false
+                                        }
+                                    } catch (e:Exception) {
+                                        e.printStackTrace()
                                     }
-                                    else {
-                                        Toast.makeText(context,"Something wrong, Try again",Toast.LENGTH_SHORT).show()
-                                        mainViewModel.throwRegistrationNotification(
-                                            context,
-                                            "Applied Technologies Institute",
-                                            "You have not been registered, Please try again."
-                                        )
-                                    }
-                                }
-                                else {
-                                    Toast.makeText(context,"No Internet connection, Try again", Toast.LENGTH_SHORT).show()
+
                                 }
                             }
+                        } catch (e:Exception) {
+                            Toast.makeText(context,"Please fill every field",Toast.LENGTH_SHORT).show()
+                            e.printStackTrace()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color("#33691E".toColorInt()),
+                        containerColor = Color("#E65100".toColorInt()),
                         contentColor = Color.White
                     )
                 ) {
@@ -493,8 +509,7 @@ fun DatePicker(context: Context) {
                 val formattedDay = String.format("%02d", day)
                 dateText.value = "$year-$formattedMonth-$formattedDay"
             } else {
-                // Show an error or inform the user that the selected date is not valid
-                // You can customize this part based on your UI/UX requirements
+               Toast.makeText(context,"Enter valid date",Toast.LENGTH_SHORT).show()
             }
         },
         currentCalendar.get(Calendar.YEAR),

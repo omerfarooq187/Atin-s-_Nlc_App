@@ -123,6 +123,22 @@ fun CoursesContent(navController: NavController) {
                     .padding(10.dp)
             )
 
+            Button(
+                onClick = {
+                    openPdfFile(context,"iot.pdf")
+                },
+                elevation = ButtonDefaults.buttonElevation(hoveredElevation = 40.dp),
+                modifier = Modifier
+                    .padding(4.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonColors(containerColor = Color("#E65100".toColorInt()), contentColor = Color.White, disabledContainerColor = Color("#9E9E9E".toColorInt()), disabledContentColor = Color.White)
+            ) {
+                Text(
+                    text = "IOTAT Course Subjects",
+                    textAlign = TextAlign.Center
+                )
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start,
@@ -153,6 +169,21 @@ fun CoursesContent(navController: NavController) {
                 modifier = Modifier
                     .padding(10.dp)
             )
+            Button(
+                onClick = {
+                    openPdfFile(context,"mmat.pdf")
+                },
+                elevation = ButtonDefaults.buttonElevation(hoveredElevation = 40.dp),
+                modifier = Modifier
+                    .padding(4.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonColors(containerColor = Color("#E65100".toColorInt()), contentColor = Color.White, disabledContainerColor = Color("#9E9E9E".toColorInt()), disabledContentColor = Color.White)
+            ) {
+                Text(
+                    text = "MMAT Course Subjects",
+                    textAlign = TextAlign.Center
+                )
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

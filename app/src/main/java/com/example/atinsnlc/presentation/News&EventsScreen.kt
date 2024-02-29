@@ -138,7 +138,7 @@ private fun ScreenContent(
                     buildAnnotatedString {
                         newsItem.forEach {
                             withStyle(style = paragraphStyle) {
-                                withStyle(style = SpanStyle(fontSize = 24.sp)) {
+                                withStyle(style = SpanStyle(fontSize = 30.sp)) {
                                     append(bullet)
                                 }
                                 append("\t\t")

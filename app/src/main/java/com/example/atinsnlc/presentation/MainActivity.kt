@@ -72,6 +72,15 @@ fun App(mainViewModel: MainViewModel) {
         composable(route = "contact_us") {
             ContactUsScreen(navController)
         }
+        composable(route = "admissions") {
+            AdmissionScreen(navController)
+        }
+        composable(route = "results") {
+            ResultsScreen(navController)
+        }
+        composable(route = "support_info") {
+            SupportAndInformationScreen(navController)
+        }
     }
 }
 

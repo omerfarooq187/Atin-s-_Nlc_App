@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 
 
@@ -62,7 +63,7 @@ fun Sections(navController: NavController) {
                     .fillMaxSize()
                     .padding(5.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color.LightGray)
+                    .background(Color("#E65100".toColorInt()))
                     .clickable {
                         when (item.title) {
                             "News & Events" -> {
@@ -83,6 +84,18 @@ fun Sections(navController: NavController) {
                             "Contact Us" -> {
                                 navController.navigate("contact_us")
                             }
+                            "Recommendations" -> {
+                                navController.navigate("recommendations")
+                            }
+                            "Admissions" -> {
+                                navController.navigate("admissions")
+                            }
+                            "Results" -> {
+                                navController.navigate("results")
+                            }
+                            "Support & Information" -> {
+                                navController.navigate("support_info")
+                            }
                         }
                     },
                 contentAlignment = Alignment.Center
@@ -94,16 +107,22 @@ fun Sections(navController: NavController) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(imageVector = item.icon, contentDescription = item.title,
-                        modifier = Modifier.size(50.dp))
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.title,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(50.dp)
+                    )
                     Spacer(modifier = Modifier.padding(10.dp))
                     if (item.title == "Recommendations") {
-                        Text(text = item.title, fontSize = 12.5.sp)
+                        Text(text = item.title, fontSize = 12.5.sp, color = Color.White)
                     }
                     else {
                         Text(
                             text = item.title,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = Color.White
                         )
                     }
                 }

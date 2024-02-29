@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.outlined.Assignment
@@ -40,6 +42,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -69,7 +72,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NavigationDrawer(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
+    val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var selectedItem by remember {
         mutableStateOf(navigationItems[0])
@@ -89,7 +92,9 @@ fun NavigationDrawer(navController: NavController) {
                 {
                     Column(
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .verticalScroll(scrollState)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.nlc_logo),
@@ -118,6 +123,12 @@ fun NavigationDrawer(navController: NavController) {
                         label = {
                             Text(text = item.title)
                         },
+                        colors = NavigationDrawerItemDefaults
+                            .colors(
+                                selectedContainerColor = Color("#E65100".toColorInt()),
+                                selectedTextColor = Color.White,
+                                selectedIconColor = Color.White
+                            ),
                         selected = item == selectedItem,
                         onClick = {
                             selectedItem = item
@@ -139,6 +150,18 @@ fun NavigationDrawer(navController: NavController) {
                                 }
                                 "Contact Us" -> {
                                     navController.navigate("contact_us")
+                                }
+                                "Recommendations" -> {
+                                    navController.navigate("recommendations")
+                                }
+                                "Admissions" -> {
+                                    navController.navigate("admissions")
+                                }
+                                "Results" -> {
+                                    navController.navigate("results")
+                                }
+                                "Support & Information" -> {
+                                    navController.navigate("support_info")
                                 }
                             }
                             coroutineScope.launch {
@@ -162,7 +185,7 @@ fun NavigationDrawer(navController: NavController) {
                             } else {
                                 Text(text = "")
                             }
-                        },
+                        }
                         )
                 }
             }
