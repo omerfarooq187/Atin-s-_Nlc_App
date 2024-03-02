@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,9 +68,9 @@ fun FeeScreenContent(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#9E9E9E".toColorInt()),
-                    navigationIconContentColor = Color.Black,
-                    titleContentColor = Color.Black
+                    containerColor = Color("#636161".toColorInt()),
+                    navigationIconContentColor = Color.White,
+                    titleContentColor = Color.White
                 )
             )
         }
@@ -85,7 +86,17 @@ fun FeeScreenContent(navController: NavController) {
                 fontSize = 16.sp,
                 textAlign = TextAlign.Justify
             )
-            Spacer(modifier = Modifier.height(170.dp))
+            Spacer(modifier = Modifier.height(90.dp))
+            Text(
+                text = "Click here\n\nto download",
+                textAlign = TextAlign.Center,
+                fontSize = 45.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
+
             Button(
                 onClick = {
                     openPdfFile(context)
@@ -99,7 +110,7 @@ fun FeeScreenContent(navController: NavController) {
                 colors = ButtonColors(containerColor = Color("#E65100".toColorInt()), contentColor = Color.White, disabledContainerColor = Color("#9E9E9E".toColorInt()), disabledContentColor = Color.White)
             ) {
                 Text(
-                    text = "Click Here to download fee details",
+                    text = "Download",
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center
                 )
@@ -112,7 +123,7 @@ private fun openPdfFile(context: Context) {
     var `in`: InputStream? = null
     var out: OutputStream? = null
     val fileName = "fee_details.pdf"
-    val file: File = File(context.filesDir, fileName)
+    val file = File(context.filesDir, fileName)
 
     try {
         `in` = assetManager.open(fileName)

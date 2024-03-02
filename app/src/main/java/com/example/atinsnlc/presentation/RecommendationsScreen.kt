@@ -47,7 +47,7 @@ fun RecommendationsContent(navController:NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#33691E".toColorInt()),
+                    containerColor = Color("#636161".toColorInt()),
                     navigationIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )

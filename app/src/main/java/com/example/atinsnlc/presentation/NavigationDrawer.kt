@@ -1,15 +1,18 @@
 package com.example.atinsnlc.presentation
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
@@ -82,22 +85,23 @@ fun NavigationDrawer(navController: NavController) {
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f)
+                    .fillMaxWidth(0.90f)
+                    .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                    .padding(end = 10.dp)
             ) {
 
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.wrapContentSize()
+                    modifier = Modifier
+                        .verticalScroll(scrollState)
                 )
                 {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .verticalScroll(scrollState)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.nlc_logo),
+                            painter = painterResource(id = R.drawable.icon),
                             contentDescription = "NLC",
                             modifier = Modifier
                                 .width(200.dp)
@@ -207,14 +211,14 @@ fun NavigationDrawer(navController: NavController) {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color("#9E9E9E".toColorInt()),
-                        navigationIconContentColor = Color.Black,
-                        titleContentColor = Color.Black
+                        containerColor = Color("#636161".toColorInt()),
+                        navigationIconContentColor = Color.White,
+                        titleContentColor = Color.White
                     )
                 )
             },
         ) {
-            Box(modifier = Modifier.padding(it)) {
+            Box(modifier = Modifier.padding(it).background(Color.Black)) {
                 Sections(navController)
             }
         }

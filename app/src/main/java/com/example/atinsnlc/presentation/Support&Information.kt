@@ -40,9 +40,9 @@ fun SupportAndInformationScreenContents(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#9E9E9E".toColorInt()),
-                    navigationIconContentColor = Color.Black,
-                    titleContentColor = Color.Black
+                    containerColor = Color("#636161".toColorInt()),
+                    navigationIconContentColor = Color.White,
+                    titleContentColor = Color.White
                 )
             )
         }

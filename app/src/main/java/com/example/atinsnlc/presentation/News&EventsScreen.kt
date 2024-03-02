@@ -37,6 +37,7 @@ import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -89,9 +90,9 @@ private fun ScreenContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#9E9E9E".toColorInt()),
-                    navigationIconContentColor = Color.Black,
-                    titleContentColor = Color.Black
+                    containerColor = Color("#636161".toColorInt()),
+                    navigationIconContentColor = Color.White,
+                    titleContentColor = Color.White
                 )
             )
         }
@@ -148,7 +149,8 @@ private fun ScreenContent(
                     },
                     modifier = Modifier
                         .padding(6.dp),
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Justify
                 )
             }
         }
