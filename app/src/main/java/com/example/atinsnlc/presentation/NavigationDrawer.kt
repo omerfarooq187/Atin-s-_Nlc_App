@@ -1,18 +1,29 @@
 package com.example.atinsnlc.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
@@ -70,13 +81,28 @@ import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import com.example.atinsnlc.R
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun NavigationDrawer(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(
+        pageCount = { images.size }
+    )
     var selectedItem by remember {
         mutableStateOf(navigationItems[0])
     }
@@ -86,10 +112,7 @@ fun NavigationDrawer(navController: NavController) {
             ModalDrawerSheet(
                 modifier = Modifier
                     .fillMaxWidth(0.90f)
-                    .background(color = Color.White, shape = RoundedCornerShape(10.dp))
-                    .padding(end = 10.dp)
             ) {
-
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
@@ -106,7 +129,6 @@ fun NavigationDrawer(navController: NavController) {
                             modifier = Modifier
                                 .width(200.dp)
                                 .padding(top = 20.dp)
-
                         )
 
                         Text(
@@ -122,76 +144,90 @@ fun NavigationDrawer(navController: NavController) {
                     }
 
                 }
-                navigationItems.forEach { item ->
-                    NavigationDrawerItem(
-                        label = {
-                            Text(text = item.title)
-                        },
-                        colors = NavigationDrawerItemDefaults
-                            .colors(
-                                selectedContainerColor = Color("#E65100".toColorInt()),
-                                selectedTextColor = Color.White,
-                                selectedIconColor = Color.White
-                            ),
-                        selected = item == selectedItem,
-                        onClick = {
-                            selectedItem = item
-                            when (item.title) {
-                                "News & Events" -> {
-                                    navController.navigate("news&events")
-                                }
-                                "Registration" -> {
-                                    navController.navigate("registration")
-                                }
-                                "Fee Structure" -> {
-                                    navController.navigate("fee_structure")
-                                }
-                                "Courses Catalog" -> {
-                                    navController.navigate("courses")
-                                }
-                                "About Us" -> {
-                                    navController.navigate("about_us")
-                                }
-                                "Contact Us" -> {
-                                    navController.navigate("contact_us")
-                                }
-                                "Recommendations" -> {
-                                    navController.navigate("recommendations")
-                                }
-                                "Admissions" -> {
-                                    navController.navigate("admissions")
-                                }
-                                "Results" -> {
-                                    navController.navigate("results")
-                                }
-                                "Support & Information" -> {
-                                    navController.navigate("support_info")
-                                }
-                            }
-                            coroutineScope.launch {
-                                drawerState.close()
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (item == selectedItem) {
-                                    item.selectedIcon
-                                } else {
-                                    item.unSelectedIcon
-                                },
-                                contentDescription = item.title
-                            )
-                        },
+                LazyColumn {
+                    items(navigationItems) { item ->
+                        NavigationDrawerItem(
+                            label = {
+                                Text(text = item.title)
+                            },
+                            colors = NavigationDrawerItemDefaults
+                                .colors(
+                                    selectedContainerColor = Color("#E65100".toColorInt()),
+                                    selectedTextColor = Color.White,
+                                    selectedIconColor = Color.White
+                                ),
+                            selected = item == selectedItem,
+                            onClick = {
+                                selectedItem = item
+                                when (item.title) {
+                                    "News & Events" -> {
+                                        navController.navigate("news&events")
+                                    }
 
-                        badge = {
-                            if (item.badgeCounts != null && item.badgeCounts != 0) {
-                                Text(text = item.badgeCounts.toString())
-                            } else {
-                                Text(text = "")
-                            }
-                        }
+                                    "Registration" -> {
+                                        navController.navigate("registration")
+                                    }
+
+                                    "Fee Structure" -> {
+                                        navController.navigate("fee_structure")
+                                    }
+
+                                    "Courses Catalog" -> {
+                                        navController.navigate("courses")
+                                    }
+
+                                    "About Us" -> {
+                                        navController.navigate("about_us")
+                                    }
+
+                                    "Contact Us" -> {
+                                        navController.navigate("contact_us")
+                                    }
+
+                                    "Recommendations" -> {
+                                        navController.navigate("recommendations")
+                                    }
+
+                                    "Admissions" -> {
+                                        navController.navigate("admissions")
+                                    }
+
+                                    "Results" -> {
+                                        navController.navigate("results")
+                                    }
+
+                                    "Support & Information" -> {
+                                        navController.navigate("support_info")
+                                    }
+                                }
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (item == selectedItem) {
+                                        item.selectedIcon
+                                    } else {
+                                        item.unSelectedIcon
+                                    },
+                                    contentDescription = item.title
+                                )
+                            },
+
+                            badge = {
+                                if (item.badgeCounts != null && item.badgeCounts != 0) {
+                                    Text(text = item.badgeCounts.toString())
+                                } else {
+                                    Text(text = "")
+                                }
+                            },
+                            modifier = Modifier
+                                .padding(NavigationDrawerItemDefaults.ItemPadding)
                         )
+                    }
                 }
+
             }
         }
     ) {
@@ -210,16 +246,92 @@ fun NavigationDrawer(navController: NavController) {
                             Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
                         }
                     },
+                    actions = {
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notification",
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp)
+                                .clickable {
+                                    navController.navigate("notifications")
+                                }
+                        )
+                    },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color("#636161".toColorInt()),
+                        containerColor = Color("#013220".toColorInt()),
                         navigationIconContentColor = Color.White,
-                        titleContentColor = Color.White
+                        titleContentColor = Color.White,
+                        actionIconContentColor = Color.White
                     )
                 )
             },
         ) {
-            Box(modifier = Modifier.padding(it).background(Color.Black)) {
-                Sections(navController)
+            val lazyListState = rememberLazyStaggeredGridState()
+            var pagerVisibility by remember {
+                mutableStateOf(true)
+            }
+            var currentScrollPosition by remember {
+                mutableIntStateOf(0)
+            }
+            LaunchedEffect(lazyListState) {
+                snapshotFlow { lazyListState.isScrollInProgress }
+                    .collect {scrolling->
+                        if (scrolling.and(lazyListState.firstVisibleItemScrollOffset>0)) {
+                            pagerVisibility = false
+                            currentScrollPosition = lazyListState.firstVisibleItemScrollOffset
+                        }
+                        if(currentScrollPosition > lazyListState.firstVisibleItemScrollOffset) {
+                            pagerVisibility = true
+                        }
+                    }
+            }
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .background(Color("#636161".toColorInt()))
+            ) {
+                AnimatedVisibility(
+                    visible = pagerVisibility,
+                    enter = expandIn(),
+                    exit = shrinkOut()
+                ) {
+                    HorizontalPager(
+                        state = pagerState,
+                        key = { key ->
+                            images[key].image
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.3f)
+                    ) { page ->
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            Image(
+                                painter = painterResource(id = images[page].image),
+                                contentDescription = "",
+                                contentScale = ContentScale.Crop,
+                                alpha = 0.6f,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                            if (images[page].text == "WELCOME") {
+                                TypewriterText(texts = listOf("Welcome to Applied Technologies Institute Mandra"))
+                            } else {
+                                Text(
+                                    text = images[page].text,
+                                    fontSize = 22.sp,
+                                    fontFamily = FontFamily(Font(R.font.poppins)),
+                                    textAlign = TextAlign.Center,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+                Sections(navController,lazyListState)
             }
         }
     }
@@ -300,3 +412,60 @@ val navigationItems = listOf(
         title = "Support & Information"
     )
 )
+
+data class ImageWithText(
+    val image: Int,
+    val text: String
+)
+
+val images = listOf(
+    ImageWithText(
+        R.drawable.image2,
+        "WELCOME"
+    ),
+    ImageWithText(
+        R.drawable.image1,
+        "Applied Technologies Institute NLC"
+    )
+)
+
+
+@Composable
+fun TypewriterText(
+    texts: List<String>,
+) {
+    var textIndex by remember {
+        mutableIntStateOf(0)
+    }
+    var textToDisplay by remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(
+        Unit,
+    ) {
+        while (textIndex < texts.size) {
+            texts[textIndex].forEachIndexed { charIndex, _ ->
+                textToDisplay = texts[textIndex]
+                    .substring(
+                        startIndex = 0,
+                        endIndex = charIndex + 1,
+                    )
+                delay(160)
+            }
+            textIndex = (textIndex + 1) % texts.size
+            delay(1000)
+            break
+        }
+    }
+
+    Text(
+        text = textToDisplay,
+        fontSize = 24.sp,
+        color = Color.White,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .padding(12.dp)
+    )
+}

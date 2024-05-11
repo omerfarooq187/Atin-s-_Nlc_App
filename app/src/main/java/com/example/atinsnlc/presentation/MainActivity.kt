@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var mainViewModel: MainViewModel
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
@@ -82,6 +83,9 @@ fun App(mainViewModel: MainViewModel) {
         }
         composable(route = "support_info") {
             SupportAndInformationScreen(navController)
+        }
+        composable(route = "notifications") {
+            NotificationsScreen(navController)
         }
     }
 }

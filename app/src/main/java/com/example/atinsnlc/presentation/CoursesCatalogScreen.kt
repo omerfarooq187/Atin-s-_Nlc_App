@@ -71,7 +71,7 @@ fun CoursesContent(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#636161".toColorInt()),
+                    containerColor = Color("#013220".toColorInt()),
                     navigationIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )
@@ -315,7 +315,7 @@ fun CoursesContent(navController: NavController) {
             )
             Button(
                 onClick = {
-                    openPdfFile(context,"mech_subjects.pdf")
+                    openPdfFile(context,"metallurgy_welding.pdf")
                 },
                 elevation = ButtonDefaults.buttonElevation(hoveredElevation = 40.dp),
                 modifier = Modifier
@@ -336,7 +336,7 @@ private fun openPdfFile(context: Context, fileName:String) {
     val assetManager: AssetManager = context.assets
     var `in`: InputStream? = null
     var out: OutputStream? = null
-    val file: File = File(context.filesDir, fileName)
+    val file = File(context.filesDir, fileName)
 
     try {
         `in` = assetManager.open(fileName)

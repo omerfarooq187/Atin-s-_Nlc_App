@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -47,15 +48,14 @@ fun HomeScreen(navController: NavController) {
 
 
 @Composable
-fun Sections(navController: NavController) {
-    val gridState = rememberLazyStaggeredGridState()
+fun Sections(navController: NavController, lazyListState: LazyStaggeredGridState) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         userScrollEnabled = true,
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp),
-        state = gridState
+            .padding(16.dp),
+        state = lazyListState,
     ) {
         items(items) { item ->
             Box(
@@ -69,30 +69,39 @@ fun Sections(navController: NavController) {
                             "News & Events" -> {
                                 navController.navigate("news&events")
                             }
+
                             "Registration" -> {
                                 navController.navigate("registration")
                             }
+
                             "Fee Structure" -> {
                                 navController.navigate("fee_structure")
                             }
+
                             "Courses Catalog" -> {
                                 navController.navigate("courses")
                             }
+
                             "About Us" -> {
                                 navController.navigate("about_us")
                             }
+
                             "Contact Us" -> {
                                 navController.navigate("contact_us")
                             }
+
                             "Recommendations" -> {
                                 navController.navigate("recommendations")
                             }
+
                             "Admissions" -> {
                                 navController.navigate("admissions")
                             }
+
                             "Results" -> {
                                 navController.navigate("results")
                             }
+
                             "Support & Information" -> {
                                 navController.navigate("support_info")
                             }
@@ -103,7 +112,6 @@ fun Sections(navController: NavController) {
                 Column(
                     modifier = Modifier
                         .padding(20.dp),
-
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

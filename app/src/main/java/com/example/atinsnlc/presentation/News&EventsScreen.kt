@@ -90,7 +90,7 @@ private fun ScreenContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#636161".toColorInt()),
+                    containerColor = Color("#013220".toColorInt()),
                     navigationIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )
@@ -107,8 +107,7 @@ private fun ScreenContent(
                     .fillMaxSize()
             ) {
                 Text(
-                    if (newsString=="") {"Welcome To Applied Technologies Institute Mandra"}
-                    else {newsString},
+                    text = "Welcome To Applied Technologies Institute Mandra",
                     style = MaterialTheme.typography.headlineSmall,
                     color = Color.White,
                     modifier = Modifier

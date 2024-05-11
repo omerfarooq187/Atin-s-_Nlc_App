@@ -45,7 +45,7 @@ fun ContactScreenContent(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#636161".toColorInt()),
+                    containerColor = Color("#013220".toColorInt()),
                     navigationIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )

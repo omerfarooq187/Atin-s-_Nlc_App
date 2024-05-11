@@ -163,7 +163,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#636161".toColorInt()),
+                    containerColor = Color("#013220".toColorInt()),
                     navigationIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )
@@ -312,10 +312,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         gmail = it
                     },
                     label = {
-                        Text(text = "Gmail")
+                        Text(text = "Email")
                     },
                     placeholder = {
-                        Text(text = "Enter Gmail")
+                        Text(text = "Enter your email address")
                     },
                     singleLine = true,
                     leadingIcon = {
@@ -434,23 +434,33 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                                     try {
                                         if (isInternetAvailable(context)) {
                                             val studentId =
-                                                mainViewModel.postStudentData(studentDataItem, image)
+                                                mainViewModel.postStudentData(
+                                                    studentDataItem,
+                                                    image
+                                                )
                                             if (studentId != -1) {
                                                 val response = mainViewModel.downloadForm(studentId)
                                                 val file =
-                                                    mainViewModel.savePdf(response, "form.pdf", context)
+                                                    mainViewModel.savePdf(
+                                                        response,
+                                                        "form.pdf",
+                                                        context
+                                                    )
                                                 isLoading = false
                                                 navController.popBackStack()
-                                                downloadPdf(context, file!!)
+//                                                downloadPdf(context, file!!)
                                                 delay(1500)
                                                 mainViewModel.throwRegistrationNotification(
                                                     context,
                                                     "Applied Technologies Institute",
                                                     "You have been successfully registered"
                                                 )
-                                            }
-                                            else {
-                                                Toast.makeText(context,"Something wrong, Try again",Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Something wrong, Try again",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                                 isLoading = false
                                                 mainViewModel.throwRegistrationNotification(
                                                     context,
@@ -458,19 +468,23 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                                                     "You have not been registered, Please try again."
                                                 )
                                             }
-                                        }
-                                        else {
-                                            Toast.makeText(context,"No Internet connection, Try again", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "No Internet connection, Try again",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                             isLoading = false
                                         }
-                                    } catch (e:Exception) {
+                                    } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
 
                                 }
                             }
-                        } catch (e:Exception) {
-                            Toast.makeText(context,"Please fill every field",Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Please fill every field", Toast.LENGTH_SHORT)
+                                .show()
                             e.printStackTrace()
                         }
                     },
@@ -509,7 +523,7 @@ fun DatePicker(context: Context) {
                 val formattedDay = String.format("%02d", day)
                 dateText.value = "$year-$formattedMonth-$formattedDay"
             } else {
-               Toast.makeText(context,"Enter valid date",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Enter valid date", Toast.LENGTH_SHORT).show()
             }
         },
         currentCalendar.get(Calendar.YEAR),
@@ -574,16 +588,16 @@ fun validateFields(
     } else if (fatherName.isEmpty() || Regex("[!@#\$%^&)*(~?><}{|/=-_]").matches(fatherName)) {
         Toast.makeText(context, "Enter valid Father's name", Toast.LENGTH_SHORT).show()
         validation = false
-    } else if (cnic.length > 13 || cnic.length < 13) {
+    } else if (cnic.length != 13) {
         Toast.makeText(context, "Enter valid CNIC or B-form", Toast.LENGTH_SHORT).show()
         validation = false
-    } else if (contact.length > 11 || contact.length < 11) {
+    } else if (contact.length != 11) {
         Toast.makeText(context, "Enter Valid Contact No", Toast.LENGTH_SHORT).show()
         validation = false
     } else if (course == "Select your desired course") {
         Toast.makeText(context, "Select course", Toast.LENGTH_SHORT).show()
         validation = false
-    } else if (gmail.isNotEmpty() &&!gmail.contains("@")) {
+    } else if (gmail.isNotEmpty() && !gmail.contains("@")) {
         Toast.makeText(
             context,
             "Enter valid email otherwise don't enter email",
@@ -591,10 +605,11 @@ fun validateFields(
         ).show()
         validation = false
     } else if (imageUri == null) {
-        Toast.makeText(context,
+        Toast.makeText(
+            context,
             "Select a photo",
             Toast.LENGTH_SHORT
-            ).show()
+        ).show()
     }
     return validation
 }
@@ -611,7 +626,7 @@ fun downloadPdf(context: Context, pdfFile: File) {
     )
     intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-       // Create a chooser to allow the user to pick an app for viewing the PDF
+    // Create a chooser to allow the user to pick an app for viewing the PDF
     val chooserIntent = Intent.createChooser(intent, "Open PDF with")
 
     try {
@@ -623,10 +638,11 @@ fun downloadPdf(context: Context, pdfFile: File) {
 }
 
 //Internet connection check method
-private fun isInternetAvailable(context: Context) :Boolean{
+private fun isInternetAvailable(context: Context): Boolean {
     var result: Boolean
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val networkCapabilities = connectivityManager.activeNetwork?: return false
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networkCapabilities = connectivityManager.activeNetwork ?: return false
     val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
     result = when {
         actNw?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true -> true

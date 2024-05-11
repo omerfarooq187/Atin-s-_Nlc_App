@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -68,7 +70,7 @@ fun FeeScreenContent(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#636161".toColorInt()),
+                    containerColor = Color("#013220".toColorInt()),
                     navigationIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )
@@ -76,6 +78,7 @@ fun FeeScreenContent(navController: NavController) {
         }
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(it)
                 .padding(8.dp)
@@ -86,15 +89,22 @@ fun FeeScreenContent(navController: NavController) {
                 fontSize = 16.sp,
                 textAlign = TextAlign.Justify
             )
-            Spacer(modifier = Modifier.height(90.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Text(
-                text = "Click here\n\nto download",
+                text = "Click Here\n\nto Download",
                 textAlign = TextAlign.Center,
-                fontSize = 45.sp,
+                fontSize = 40.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
+            )
+
+            Icon(
+                imageVector = Icons.Default.ArrowDownward,
+                contentDescription = "",
+                modifier = Modifier
+                    .size(80.dp)
             )
 
             Button(
