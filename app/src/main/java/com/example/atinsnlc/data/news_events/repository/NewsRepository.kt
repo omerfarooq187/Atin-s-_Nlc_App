@@ -8,21 +8,21 @@ import com.example.atinsnlc.data.news_events.room.NewsEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class NewsRepository @Inject constructor(private val newsApi: NewsApi, private val newsDatabase: NewsDatabase) {
+class NewsRepository @Inject constructor( private val newsDatabase: NewsDatabase) {
 
-    suspend fun getNews() {
-        Log.d("Repo","get news working...")
-        try {
-            val result = newsApi.getNews()
-            if (result.isSuccessful) {
-                result.body()?.forEach {
-                    saveData(it)
-                }
-            }
-        } catch (e:Exception) {
-            e.printStackTrace()
-        }
-    }
+//    suspend fun getNews() {
+//        Log.d("Repo","get news working...")
+//        try {
+//            val result = newsApi.getNews()
+//            if (result.isSuccessful) {
+//                result.body()?.forEach {
+//                    saveData(it)
+//                }
+//            }
+//        } catch (e:Exception) {
+//            e.printStackTrace()
+//        }
+//    }
 
 
     private suspend fun saveData(newsItem: NewsItem) {

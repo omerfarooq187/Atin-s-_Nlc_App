@@ -1,47 +1,39 @@
 package com.example.atinsnlc.data.di
 
-import com.example.atinsnlc.data.news_events.NewsApi
-import com.example.atinsnlc.data.registration.RegistrationApi
-import com.google.gson.GsonBuilder
+import android.util.Log
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-class NetworkModule {
-    @Singleton
+object NetworkModule {
+
     @Provides
-    fun provideRetrofit(): Retrofit {
-        return Retrofit
-            .Builder()
-            .baseUrl("https://umarfarooq90.pythonanywhere.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(
-                OkHttpClient().newBuilder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .build()
-            )
-            .build()
+    @Singleton
+    fun provideKtorHttpClient(): HttpClient {
+        return HttpClient(Android) {
+            install(ContentNegotiation) {
+
+            }
+            install(Logging) {
+                logger = object: Logger {
+                    override fun log(message: String) {
+                        Log.d("Ktor", message)
+                    }
+                }
+                level = LogLevel.ALL
+            }
+
+        }
     }
 
-    @Singleton
-    @Provides
-    fun provideApi(retrofit: Retrofit): NewsApi {
-        return retrofit.create(NewsApi::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun provideRegistrationApi(retrofit: Retrofit): RegistrationApi {
-        return retrofit.create(RegistrationApi::class.java)
-    }
 }

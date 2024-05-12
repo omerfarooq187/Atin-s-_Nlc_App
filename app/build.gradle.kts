@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -101,5 +102,9 @@ dependencies {
     implementation ("com.itextpdf:itextg:5.5.10")
 
 
-
+    implementation("io.ktor:ktor-client-android:2.3.6")
+    implementation("io.ktor:ktor-client-serialization:2.3.6")
+    implementation("io.ktor:ktor-client-logging:2.3.6")
+    implementation("io.ktor:ktor-client-okhttp:2.2.3")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.6")
 }

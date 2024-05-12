@@ -1,6 +1,7 @@
 package com.example.atinsnlc.viewModel
 
 import android.content.Context
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,12 +9,11 @@ import com.example.atinsnlc.data.news_events.repository.NewsRepository
 import com.example.atinsnlc.data.news_events.room.NewsEntity
 import com.example.atinsnlc.data.registration.NotificationUtils
 import com.example.atinsnlc.data.registration.StudentDataItem
-import com.example.atinsnlc.data.registration.repository.DataRepository
+import com.example.atinsnlc.data.registration.DataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import java.io.File
 import java.io.FileOutputStream
@@ -30,7 +30,6 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            newsRepository.getNews()
             news = newsRepository.getData()
         }
 
@@ -48,14 +47,13 @@ class MainViewModel @Inject constructor(
 
     suspend fun postStudentData(
         studentDataItem: StudentDataItem,
-        image: MultipartBody.Part,
-    ): Int {
-        return dataRepository.postData(studentDataItem, image)
+        selectedImageUri: Uri,
+        context: Context
+    ): Boolean{
+        val response = dataRepository.postData(studentDataItem, selectedImageUri, context)
+        return response
     }
 
-    suspend fun downloadForm(id: Int): ResponseBody {
-        return dataRepository.getPdf(id)
-    }
     fun savePdf(responseBody: ResponseBody?, fileName: String, context: Context) :File?{
         return try {
             val file = File(context.getExternalFilesDir(null), fileName)

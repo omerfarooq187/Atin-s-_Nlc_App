@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
@@ -75,13 +76,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.atinsnlc.data.registration.StudentDataItem
 import com.example.atinsnlc.viewModel.MainViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.io.FileOutputStream
 import java.util.Calendar
 
 
@@ -124,6 +120,26 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
     }
     var selectedCourse by remember {
         mutableStateOf("Select your desired course")
+    }
+
+    var nameError by remember {
+        mutableStateOf(false)
+    }
+
+    var fatherNameError by remember {
+        mutableStateOf(false)
+    }
+
+    var cnicError by remember {
+        mutableStateOf(false)
+    }
+
+    var dobError by remember {
+        mutableStateOf(false)
+    }
+
+    var contactNumberError by remember {
+        mutableStateOf(false)
     }
 
     //Image picker logic
@@ -219,6 +235,25 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     singleLine = true,
                     onValueChange = {
                         name = it
+                        nameError =
+                            name.contains(regex = Regex("[!@#\$%^&)*(~?><}{|/=-_1234567890]"))
+                    },
+//                    supportingText = {
+//                        if (nameError) {
+//                            Text(
+//                                modifier = Modifier.fillMaxWidth(),
+//                                text = "Name should not contain numbers or special characters",
+//                                color = MaterialTheme.colorScheme.error
+//                            )
+//                        }
+//                    },
+                    trailingIcon = {
+                        if (nameError)
+                            Icon(
+                                Icons.Filled.Error,
+                                "error",
+                                tint = MaterialTheme.colorScheme.error
+                            )
                     },
                     label = {
                         Text(text = "Name")
@@ -229,6 +264,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     leadingIcon = {
                         Icon(imageVector = Icons.Filled.Person, contentDescription = "name")
                     },
+                    isError = nameError,
                     modifier = Modifier
                         .padding(5.dp)
                 )
@@ -240,6 +276,27 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     ),
                     onValueChange = {
                         fatherName = it
+                        fatherNameError =
+                            fatherName.contains(regex = Regex("[!@#\$%^&)*(~?><}{|/=-_1234567890]"))
+                    },
+//                    supportingText = {
+//                        if (fatherNameError) {
+//                            Text(
+//                                modifier = Modifier.fillMaxWidth(),
+//                                text = "Name should not contain numbers or special characters",
+//                                color = MaterialTheme.colorScheme.error
+//                            )
+//                        } else {
+//                            Spacer(modifier = Modifier.height(0.dp))
+//                        }
+//                    },
+                    trailingIcon = {
+                        if (fatherNameError)
+                            Icon(
+                                Icons.Filled.Error,
+                                "error",
+                                tint = MaterialTheme.colorScheme.error
+                            )
                     },
                     label = {
                         Text(text = "Father's Name")
@@ -263,6 +320,15 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     ),
                     onValueChange = {
                         cnic = it
+                        cnicError = cnic.length > 13
+                    },
+                    trailingIcon = {
+                        if (cnicError)
+                            Icon(
+                                Icons.Filled.Error,
+                                "error",
+                                tint = MaterialTheme.colorScheme.error
+                            )
                     },
                     label = {
                         Text(text = "CNIC/B-Form")
@@ -288,6 +354,15 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     ),
                     onValueChange = {
                         contact = it
+                        contactNumberError = contact.length > 11
+                    },
+                    trailingIcon = {
+                        if (contactNumberError)
+                            Icon(
+                                Icons.Filled.Error,
+                                "error",
+                                tint = MaterialTheme.colorScheme.error
+                            )
                     },
                     label = {
                         Text(text = "Contact Number")
@@ -405,87 +480,50 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         .padding(16.dp)
                         .size(height = 50.dp, width = 140.dp),
                     onClick = {
-                        try {
-                            val validate = validateFields(
-                                name = name,
-                                fatherName = fatherName,
-                                cnic = cnic,
-                                contact = contact,
-                                gmail = gmail,
-                                course = selectedCourse,
-                                imageUri = selectedImageUri!!,
-                                context = context
-                            )
-                            if (validate) {
-                                val studentDataItem = StudentDataItem(
+                        scope.launch {
+                                val validation = validateFields(
+                                    name = name,
+                                    fatherName = fatherName,
+                                    cnic = cnic,
+                                    contact = contact,
+                                    gmail = gmail,
+                                    course = selectedCourse,
+                                    imageUri = selectedImageUri!!,
+                                    context = context
+                                )
+                            if (validation) {
+                                isLoading = true
+                                val studentData = StudentDataItem(
                                     name = name,
                                     father_name = fatherName,
                                     dob = dob,
                                     cnic = cnic.toLong(),
-                                    contact_no = contact.toLong(),
+                                    phone_number = contact.toLong(),
                                     gmail = gmail,
                                     course = selectedCourse,
                                 )
-                                isLoading = true
-
-                                val image = uploadImage(context, selectedImageUri)
-
-                                scope.launch {
-                                    try {
-                                        if (isInternetAvailable(context)) {
-                                            val studentId =
-                                                mainViewModel.postStudentData(
-                                                    studentDataItem,
-                                                    image
-                                                )
-                                            if (studentId != -1) {
-                                                val response = mainViewModel.downloadForm(studentId)
-                                                val file =
-                                                    mainViewModel.savePdf(
-                                                        response,
-                                                        "form.pdf",
-                                                        context
-                                                    )
-                                                isLoading = false
-                                                navController.popBackStack()
-//                                                downloadPdf(context, file!!)
-                                                delay(1500)
-                                                mainViewModel.throwRegistrationNotification(
-                                                    context,
-                                                    "Applied Technologies Institute",
-                                                    "You have been successfully registered"
-                                                )
-                                            } else {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Something wrong, Try again",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                isLoading = false
-                                                mainViewModel.throwRegistrationNotification(
-                                                    context,
-                                                    "Applied Technologies Institute",
-                                                    "You have not been registered, Please try again."
-                                                )
-                                            }
-                                        } else {
-                                            Toast.makeText(
-                                                context,
-                                                "No Internet connection, Try again",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                            isLoading = false
-                                        }
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
+                                if (isInternetAvailable(context)) {
+                                    val response = mainViewModel.postStudentData(studentData, selectedImageUri!!, context)
+                                    if (response) {
+                                        isLoading = false
+                                        Toast.makeText(context, "Registered Successfully", Toast.LENGTH_SHORT).show()
+                                        navController.popBackStack()
+                                        mainViewModel.throwRegistrationNotification(context,"ATIN NLC Registration","You have been registered successfully")
                                     }
-
+                                    else {
+                                        isLoading = false
+                                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                                        mainViewModel.throwRegistrationNotification(context, "ATIN NLC Registration", "Something went wrong, Try again")
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "No Internet connection, Try again",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    isLoading = false
                                 }
                             }
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Please fill every field", Toast.LENGTH_SHORT)
-                                .show()
-                            e.printStackTrace()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -555,19 +593,6 @@ private fun isDateValid(selectedDate: Calendar): Boolean {
     val currentDate = Calendar.getInstance()
     currentDate.add(Calendar.YEAR, -16) // Subtract 16 years from the current date
     return selectedDate <= currentDate
-}
-
-fun uploadImage(context: Context, uri: Uri?): MultipartBody.Part {
-    val filesDir = context.applicationContext.filesDir
-    val file = File(filesDir, "image.png")
-
-    val inputStream = context.contentResolver.openInputStream(uri!!)
-    val outputStream = FileOutputStream(file)
-    inputStream?.copyTo(outputStream)
-    inputStream?.close()
-    val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-    val imageBody = MultipartBody.Part.createFormData("image", file.name, requestBody)
-    return imageBody
 }
 
 fun validateFields(
