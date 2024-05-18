@@ -30,7 +30,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardDefaults.shape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -58,7 +57,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
@@ -167,7 +165,7 @@ fun CoursesContent(navController: NavController) {
                 )
             ) {
                 Text(
-                    text = "IOTAT Curriculum",
+                    text = "IOTAT Detailed Subjects",
                     textAlign = TextAlign.Center
                 )
             }
@@ -221,7 +219,7 @@ fun CoursesContent(navController: NavController) {
                 )
             ) {
                 Text(
-                    text = "MMAT Curriculum",
+                    text = "MMAT Detailed Subjects",
                     textAlign = TextAlign.Center
                 )
             }
@@ -276,7 +274,7 @@ fun CoursesContent(navController: NavController) {
                 )
             ) {
                 Text(
-                    text = "CIT Curriculum",
+                    text = "CIT Detailed Subjects",
                     textAlign = TextAlign.Center
                 )
             }
@@ -333,7 +331,7 @@ fun CoursesContent(navController: NavController) {
                 )
             ) {
                 Text(
-                    text = "Civil Curriculum",
+                    text = "Civil Detailed Subjects",
                     textAlign = TextAlign.Center
                 )
             }
@@ -391,7 +389,7 @@ fun CoursesContent(navController: NavController) {
                 )
             ) {
                 Text(
-                    text = "Mechanical Curriculum",
+                    text = "Mechanical Detailed Subjects",
                     textAlign = TextAlign.Center
                 )
             }
@@ -696,13 +694,13 @@ fun CourseSubjects(subjects:List<CourseDetails>) {
             ) {
                 Text(
                     text = it.subjectCode,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Start,
                     modifier = Modifier
                         .weight(0.5f)
                 )
                 Text(
                     text = it.subjectName,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Start,
                     modifier = Modifier
                         .weight(0.5f)
                 )

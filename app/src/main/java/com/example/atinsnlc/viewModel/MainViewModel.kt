@@ -48,9 +48,10 @@ class MainViewModel @Inject constructor(
     suspend fun postStudentData(
         studentDataItem: StudentDataItem,
         selectedImageUri: Uri,
-        context: Context
+        context: Context,
+        onSuccess:(String)->Unit
     ): Boolean{
-        val response = dataRepository.postData(studentDataItem, selectedImageUri, context)
+        val response = dataRepository.postData(studentDataItem, selectedImageUri, context, onSuccess)
         return response
     }
 

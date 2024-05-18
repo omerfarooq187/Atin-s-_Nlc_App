@@ -65,6 +65,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -103,7 +104,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
     var fatherName by remember {
         mutableStateOf("")
     }
-    val dob by remember {
+    var dob by remember {
         mutableStateOf("")
     }
     var cnic by remember {
@@ -161,6 +162,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
 
     var isLoading by remember {
         mutableStateOf(false)
+    }
+
+    var responseMessage by remember {
+        mutableStateOf("")
     }
 
     Scaffold(
@@ -230,13 +235,14 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     value = name,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Next,
+                        capitalization = KeyboardCapitalization.Words
                     ),
                     singleLine = true,
                     onValueChange = {
                         name = it
-                        nameError =
-                            name.contains(regex = Regex("[!@#\$%^&)*(~?><}{|/=-_1234567890]"))
+                        nameError = name.contains(Regex("[^A-Za-z ]"))
+
                     },
 //                    supportingText = {
 //                        if (nameError) {
@@ -272,12 +278,12 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                     value = fatherName,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Next,
+                        capitalization = KeyboardCapitalization.Words
                     ),
                     onValueChange = {
                         fatherName = it
-                        fatherNameError =
-                            fatherName.contains(regex = Regex("[!@#\$%^&)*(~?><}{|/=-_1234567890]"))
+                        fatherNameError = fatherName.contains(Regex("[^A-Za-z ]"))
                     },
 //                    supportingText = {
 //                        if (fatherNameError) {
@@ -344,7 +350,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         .padding(5.dp)
                 )
                 //Date field
-                DatePicker(context = context)
+                DatePicker(context = context) {
+                    dob = it
+                    dobError = dob.isEmpty()
+                }
 
                 OutlinedTextField(
                     value = contact,
@@ -387,7 +396,7 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         gmail = it
                     },
                     label = {
-                        Text(text = "Email")
+                        Text(text = "Email (optional)")
                     },
                     placeholder = {
                         Text(text = "Enter your email address")
@@ -481,39 +490,60 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
                         .size(height = 50.dp, width = 140.dp),
                     onClick = {
                         scope.launch {
-                                val validation = validateFields(
-                                    name = name,
-                                    fatherName = fatherName,
-                                    cnic = cnic,
-                                    contact = contact,
-                                    gmail = gmail,
-                                    course = selectedCourse,
-                                    imageUri = selectedImageUri!!,
-                                    context = context
-                                )
+                            val validation = validateFields(
+                                name = name,
+                                fatherName = fatherName,
+                                cnic = cnic,
+                                contact = contact,
+                                gmail = gmail,
+                                course = selectedCourse,
+                                imageUri = selectedImageUri!!,
+                                context = context
+                            )
                             if (validation) {
                                 isLoading = true
                                 val studentData = StudentDataItem(
-                                    name = name,
-                                    father_name = fatherName,
-                                    dob = dob,
+                                    name = name.trim(),
+                                    father_name = fatherName.trim(),
+                                    dob = dob.trim(),
                                     cnic = cnic.toLong(),
                                     phone_number = contact.toLong(),
-                                    gmail = gmail,
+                                    gmail = gmail.trim(),
                                     course = selectedCourse,
                                 )
                                 if (isInternetAvailable(context)) {
-                                    val response = mainViewModel.postStudentData(studentData, selectedImageUri!!, context)
+                                    val response = mainViewModel.postStudentData(
+                                        studentData,
+                                        selectedImageUri!!,
+                                        context
+                                    ) { response->
+                                        responseMessage = response
+                                    }
                                     if (response) {
                                         isLoading = false
-                                        Toast.makeText(context, "Registered Successfully", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Registered Successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         navController.popBackStack()
-                                        mainViewModel.throwRegistrationNotification(context,"ATIN NLC Registration","You have been registered successfully")
-                                    }
-                                    else {
+                                        mainViewModel.throwRegistrationNotification(
+                                            context,
+                                            "ATIN NLC Registration",
+                                            responseMessage
+                                        )
+                                    } else {
                                         isLoading = false
-                                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                                        mainViewModel.throwRegistrationNotification(context, "ATIN NLC Registration", "Something went wrong, Try again")
+                                        Toast.makeText(
+                                            context,
+                                            "Registration Failed!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        mainViewModel.throwRegistrationNotification(
+                                            context,
+                                            "ATIN NLC Registration",
+                                            "Registration failed!\n$responseMessage"
+                                        )
                                     }
                                 } else {
                                     Toast.makeText(
@@ -542,10 +572,10 @@ fun RegistrationContent(navController: NavHostController, mainViewModel: MainVie
 }
 
 @Composable
-fun DatePicker(context: Context) {
+fun DatePicker(context: Context, onDateSelected:(String) -> Unit) {
     val currentCalendar = Calendar.getInstance()
     val selectedDate = remember { mutableStateOf(currentCalendar) }
-    val dateText = remember { mutableStateOf("yyyy-MM-dd") }
+    val dateText = remember { mutableStateOf("dd-MM-yyyy") }
 
     val datePickerDialog = DatePickerDialog(
         context,
@@ -559,7 +589,7 @@ fun DatePicker(context: Context) {
                 selectedDate.value = selectedCalendar
                 val formattedMonth = String.format("%02d", month + 1)
                 val formattedDay = String.format("%02d", day)
-                dateText.value = "$year-$formattedMonth-$formattedDay"
+                dateText.value = "$formattedDay-$formattedMonth-$year"
             } else {
                 Toast.makeText(context, "Enter valid date", Toast.LENGTH_SHORT).show()
             }
@@ -568,7 +598,7 @@ fun DatePicker(context: Context) {
         currentCalendar.get(Calendar.MONTH),
         currentCalendar.get(Calendar.DAY_OF_MONTH)
     )
-
+    onDateSelected(dateText.value)
     OutlinedTextField(
         value = dateText.value,
         onValueChange = {},
@@ -607,10 +637,10 @@ fun validateFields(
 ): Boolean {
     var validation = true
 
-    if (name.isEmpty() || Regex("[!@#\$%^&)*(~?><}{|/=-_]").matches(name)) {
+    if (name.contains(Regex("[^A-Za-z ]")) || name.isEmpty()) {
         Toast.makeText(context, "Enter valid name", Toast.LENGTH_SHORT).show()
         validation = false
-    } else if (fatherName.isEmpty() || Regex("[!@#\$%^&)*(~?><}{|/=-_]").matches(fatherName)) {
+    } else if (fatherName.contains(Regex("[^A-Za-z ]")) || fatherName.isEmpty()) {
         Toast.makeText(context, "Enter valid Father's name", Toast.LENGTH_SHORT).show()
         validation = false
     } else if (cnic.length != 13) {
@@ -635,6 +665,7 @@ fun validateFields(
             "Select a photo",
             Toast.LENGTH_SHORT
         ).show()
+        validation = false
     }
     return validation
 }
