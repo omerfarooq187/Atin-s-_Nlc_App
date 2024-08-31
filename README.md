@@ -10,8 +10,8 @@ A comprehensive college management app built using Kotlin and Jetpack Compose. T
 
 ## Screenshots
 
-![Home Screen](https://github.com/omerfarooq187/College_app/blob/main/app/src/main/assets/home_screen.png)
-![Courses Catalog Screen](https://github.com/omerfarooq187/College_app/blob/main/app/src/main/assets/courses_catalog_screen.png)
+<img src="https://github.com/omerfarooq187/College_app/blob/main/app/src/main/assets/home_screen.png" alt="Home Screen" width="400"/>
+<img src="https://github.com/omerfarooq187/College_app/blob/main/app/src/main/assets/courses_catalog_screen.png" alt="Courses Catalog Screen" width="400"/>
 
 ## Installation
 
